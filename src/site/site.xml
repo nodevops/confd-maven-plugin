@@ -1,0 +1,15 @@
+<project>
+
+    <body>
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+            <item name="Goals" href="plugin-info.html"/>
+            <item name="Usage" href="usage.html"/>
+        </menu>
+        <menu name="Examples">
+            <item href="example1.html" name="Example 1"/>
+        </menu>
+        <menu ref="reports" inherit="top"/>
+    </body>
+
+</project>

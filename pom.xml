@@ -1,94 +1,206 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <groupId>com.github.nodevops</groupId>
-   <artifactId>confd-maven-plugin</artifactId>
-   <packaging>maven-plugin</packaging>
-   <version>0.1.0-SNAPSHOT</version>
-   <name>confd-maven-plugin Maven Mojo</name>
-   <url>http://maven.apache.org</url>
+    <modelVersion>4.0.0</modelVersion>
 
-   <properties>
-      <maven.version>3.0.5</maven.version>
-      <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-   </properties>
+    <groupId>com.github.nodevops</groupId>
+    <artifactId>confd-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <version>0.1.0-SNAPSHOT</version>
+    <name>confd Maven Plugin</name>
+    <url>https://github.com/nodevops/confd-maven-plugin</url>
 
-   <prerequisites>
-      <maven>${maven.version}</maven>
-   </prerequisites>
-   <dependencies>
-      <dependency>
-         <groupId>org.apache.maven</groupId>
-         <artifactId>maven-plugin-api</artifactId>
-         <version>${maven.version}</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.maven</groupId>
-         <artifactId>maven-core</artifactId>
-         <version>${maven.version}</version>
-      </dependency>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.version>3.0.5</maven.version>
+        <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+        <mavenSitePluginVersion>3.4</mavenSitePluginVersion>
+        <mavenProjectInfoReportsPluginVersion>2.8</mavenProjectInfoReportsPluginVersion>
+        <mavenResourcesPluginVersion>2.6</mavenResourcesPluginVersion>
+        <mavenJavadocPluginVersion>2.10.3</mavenJavadocPluginVersion>
+        <mavenChangelogPluginVersion>2.3</mavenChangelogPluginVersion>
+        <mavenPmdPluginVersion>3.6</mavenPmdPluginVersion>
+        <mavenSurefireReportPluginVersion>2.19</mavenSurefireReportPluginVersion>
+        <asciidoctorMavenPluginVersion>1.5.3</asciidoctorMavenPluginVersion>
+    </properties>
 
-      <dependency>
-         <groupId>org.apache.maven.plugin-tools</groupId>
-         <artifactId>maven-plugin-annotations</artifactId>
-         <version>${mavenPluginPluginVersion}</version>
-         <scope>provided</scope>
-      </dependency>
+    <prerequisites>
+        <maven>${maven.version}</maven>
+    </prerequisites>
 
-      <!-- FOR TESTING -->
-      <dependency>
-         <groupId>junit</groupId>
-         <artifactId>junit</artifactId>
-         <version>3.8.2</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.maven.plugin-testing</groupId>
-         <artifactId>maven-plugin-testing-harness</artifactId>
-         <version>2.1</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.maven</groupId>
-         <artifactId>maven-compat</artifactId>
-         <version>${maven.version}</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.assertj</groupId>
-         <artifactId>assertj-core</artifactId>
-         <version>2.2.0</version>
-         <scope>test</scope>
-      </dependency>
-   </dependencies>
-   <build>
-      <pluginManagement>
-         <plugins>
+    <issueManagement>
+        <url>https://github.com/nodevops/confd-maven-plugin/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/nodevops/confd-maven-plugin</url>
+        <connection>scm:git:git://github.com/nodevops/confd-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:nodevops/confd-maven-plugin.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <email>pseillier@gmail.com</email>
+            <name>Philippe Seillier</name>
+            <url>https://github.com/pseillier</url>
+            <id>pseillier</id>
+        </developer>
+        <developer>
+            <email>christophe.furmaniak@gmail.com</email>
+            <name>Christophe Furmaniak</name>
+            <url>https://github.com/looztra</url>
+            <id>looztra</id>
+        </developer>
+        <developer>
+            <email>thibault.duchateau@gmail.com</email>
+            <name>Thibault Duchateau</name>
+            <url>https://github.com/tduchateau</url>
+            <id>tduchateau</id>
+        </developer>
+    </developers>
+
+    <ciManagement>
+        <system>Travis</system>
+        <url>https://travis-ci.org/nodevops/confd-maven-plugin</url>
+    </ciManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>${mavenPluginPluginVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- FOR TESTING -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-testing</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-compat</artifactId>
+            <version>${maven.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>2.2.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>${mavenPluginPluginVersion}</version>
+                    <executions>
+                        <execution>
+                            <id>mojo-descriptor</id>
+                            <goals>
+                                <goal>descriptor</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
             <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-compiler-plugin</artifactId>
-               <configuration>
-                  <source>1.6</source>
-                  <target>1.6</target>
-               </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${mavenSitePluginVersion}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-maven-plugin</artifactId>
+                        <version>${asciidoctorMavenPluginVersion}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${mavenResourcesPluginVersion}</version>
             </plugin>
             <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-plugin-plugin</artifactId>
-               <version>${mavenPluginPluginVersion}</version>
-               <executions>
-                  <execution>
-                     <id>mojo-descriptor</id>
-                     <goals>
-                        <goal>descriptor</goal>
-                     </goals>
-                  </execution>
-               </executions>
-               <configuration>
-                  <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-               </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${mavenProjectInfoReportsPluginVersion}</version>
             </plugin>
-         </plugins>
-      </pluginManagement>
-   </build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${mavenJavadocPluginVersion}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${mavenSurefireReportPluginVersion}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${mavenPmdPluginVersion}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changelog-plugin</artifactId>
+                <version>${mavenChangelogPluginVersion}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>${mavenPluginPluginVersion}</version>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
