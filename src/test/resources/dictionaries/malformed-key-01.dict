@@ -1,0 +1,7 @@
+/web/mediaserver/url=http://media01.server.com/
+/web/database/url=jdbc:mysql://server/db01
+
+# Missing the first /
+web/database/username=user01
+
+/web/database/password=pwd01

@@ -11,7 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.version>3.0.5</maven.version>
+        <maven.version>3.1.1</maven.version>
         <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
         <mavenSitePluginVersion>3.4</mavenSitePluginVersion>
         <mavenProjectInfoReportsPluginVersion>2.8</mavenProjectInfoReportsPluginVersion>
@@ -96,13 +96,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.2</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>2.1</version>
+            <version>3.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -203,4 +203,5 @@
             </plugin>
         </plugins>
     </reporting>
+
 </project>

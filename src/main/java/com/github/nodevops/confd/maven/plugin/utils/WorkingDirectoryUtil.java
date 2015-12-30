@@ -13,38 +13,39 @@ import java.util.List;
  */
 public class WorkingDirectoryUtil {
 
-   public static void generateConfdArtefacts(File workingDirectory, List<TemplateConfig> templates) throws IOException {
+    public static void generateConfdArtefacts(File workingDirectory, List<TemplateConfig> templates) throws IOException {
 
-      File templatesDirectory = new File(workingDirectory, "templates");
-      File confdDirectory = new File(workingDirectory, "conf.d");
+        File templatesDirectory = new File(workingDirectory, "templates");
+        File tomlDirectory = new File(workingDirectory, "conf.d");
 
-      if(workingDirectory.exists()) {
-         FileUtils.deleteDirectory(workingDirectory);
-      }
+        if (workingDirectory.exists()) {
+            FileUtils.deleteDirectory(workingDirectory);
+        }
 
-      FileUtils.mkdir(templatesDirectory.getAbsolutePath());
-      FileUtils.mkdir(confdDirectory.getAbsolutePath());
-      for (TemplateConfig tc : templates) {
-         File tomlFile = FileUtils.createTempFile("template", ".toml", confdDirectory);
-         writeToml(tomlFile, tc);
+        FileUtils.mkdir(templatesDirectory.getAbsolutePath());
+        FileUtils.mkdir(tomlDirectory.getAbsolutePath());
+        for (TemplateConfig tc : templates) {
+            String tomlBaseName=FileUtils.basename(tc.getSrc().getAbsolutePath())+"toml";
+            File tomlFile = new File(tomlDirectory,tomlBaseName);
+            writeToml(tomlFile, tc);
 
-         FileUtils.copyFileToDirectory(tc.getSrc(), templatesDirectory);
+            FileUtils.copyFileToDirectory(tc.getSrc(), templatesDirectory);
 
-      }
-   }
+        }
+    }
 
 
-   private static void writeToml(File tomlFile, TemplateConfig tc) throws IOException {
-      StringWriter sw = new StringWriter();
-      sw.append("[template]").append('\n');
-      sw.append("src = ").append('"').append(FileUtils.removePath(tc.getSrc().getPath())).append('"').append('\n');
-      sw.append("dest = ").append('"').append(tc.getDest().getAbsolutePath()).append('"').append('\n');
-      sw.append("keys = [").append('\n');
-      for (String key : tc.getKeys()) {
-         sw.append('"').append(key).append('"').append(',').append('\n');
-      }
-      sw.append(']').append('\n');
-      FileUtils.fileWrite(tomlFile, "UTF8", sw.toString());
-   }
+    private static void writeToml(File tomlFile, TemplateConfig tc) throws IOException {
+        StringWriter sw = new StringWriter();
+        sw.append("[template]").append('\n');
+        sw.append("src = ").append('"').append(FileUtils.removePath(tc.getSrc().getPath())).append('"').append('\n');
+        sw.append("dest = ").append('"').append(tc.getDest().getAbsolutePath()).append('"').append('\n');
+        sw.append("keys = [").append('\n');
+        for (String key : tc.getKeys()) {
+            sw.append('"').append(key).append('"').append(',').append('\n');
+        }
+        sw.append(']').append('\n');
+        FileUtils.fileWrite(tomlFile, "UTF8", sw.toString());
+    }
 
 }

@@ -7,30 +7,30 @@ import java.util.Properties;
  */
 public class ProcessorConfig {
 
-   private String name;
-   private Properties properties;
+    private String name;
+    private Properties properties;
 
-   public String getName() {
-      return name;
-   }
+    public String getName() {
+        return name;
+    }
 
-   public void setName(String name) {
-      this.name = name;
-   }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-   public Properties getProperties() {
-      return properties;
-   }
+    public Properties getProperties() {
+        return properties;
+    }
 
-   public void setProperties(Properties properties) {
-      this.properties = properties;
-   }
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
 
-   @Override
-   public String toString() {
-      return "ProcessorConfig{" +
-         "name='" + name + '\'' +
-         ", properties=" + properties +
-         '}';
-   }
+    @Override
+    public String toString() {
+        return "ProcessorConfig{" +
+            "name='" + name + '\'' +
+            ", properties=" + properties +
+            '}';
+    }
 }
