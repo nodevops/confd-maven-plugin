@@ -3,3 +3,6 @@ language: java
 before_install:
   - sudo wget --no-check-certificate -O /usr/local/bin/confd https://github.com/kelseyhightower/confd/releases/download/v0.11.0/confd-0.11.0-linux-amd64
   - sudo chmod +x /usr/local/bin/confd
+
+after_script:
+  - mvn site -P publish-site --settings maven-settings.xml
