@@ -7,7 +7,7 @@
     <packaging>maven-plugin</packaging>
     <version>0.1.0-SNAPSHOT</version>
     <name>confd Maven Plugin</name>
-    <url>https://github.com/nodevops/confd-maven-plugin</url>
+    <url>http://nodevops.github.io/confd-maven-plugin</url>
 
     <properties>
         <!-- project config -->
@@ -15,6 +15,7 @@
         <maven.version>3.1.1</maven.version>
 
         <confd.local.path.for.tests>/usr/local/bin/confd</confd.local.path.for.tests>
+        <github.global.server>github</github.global.server>
         <!-- dependencies -->
         <lombok.version>1.16.6</lombok.version>
         <junit.version>4.12</junit.version>
@@ -30,6 +31,7 @@
         <mavenSurefireReportPluginVersion>2.19</mavenSurefireReportPluginVersion>
         <asciidoctorMavenPluginVersion>1.5.3</asciidoctorMavenPluginVersion>
         <maven-plugin-testing-harness.version>3.1.0</maven-plugin-testing-harness.version>
+        <github-site-maven-plugin.version>0.12</github-site-maven-plugin.version>
     </properties>
 
     <prerequisites>
@@ -167,22 +169,20 @@
                         <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${mavenSitePluginVersion}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctor-maven-plugin</artifactId>
+                            <version>${asciidoctorMavenPluginVersion}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>${mavenSitePluginVersion}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <version>${asciidoctorMavenPluginVersion}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
     </build>
 
     <reporting>
@@ -225,4 +225,29 @@
         </plugins>
     </reporting>
 
+    <profiles>
+        <profile>
+            <id>publish-site</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>site-maven-plugin</artifactId>
+                        <version>${github-site-maven-plugin.version}</version>
+                        <configuration>
+                            <message>Creating site for ${project.version}</message>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>site</goal>
+                                </goals>
+                                <phase>site</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
