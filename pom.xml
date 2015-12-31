@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.version>3.1.1</maven.version>
 
-        <confd.local.path.for.tests>/home/cfurmaniak/workspace/SANDBOXES/confd-test/confd-linux-amd64-0.11.0</confd.local.path.for.tests>
+        <confd.local.path.for.tests>/usr/local/bin/confd</confd.local.path.for.tests>
         <!-- dependencies -->
         <lombok.version>1.16.6</lombok.version>
         <junit.version>4.12</junit.version>
