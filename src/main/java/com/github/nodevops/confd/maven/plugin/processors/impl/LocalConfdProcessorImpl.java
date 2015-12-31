@@ -39,7 +39,10 @@ public class LocalConfdProcessorImpl implements Processor {
 
         try {
             log.info("Start process " + processBuilder.command());
-            processBuilder.environment().putAll(DictionaryUtil.readDictionaryAsEnvVariables(context.getDictionaryPath(), context.getEncoding()));
+            processBuilder
+                .environment()
+                .putAll(
+                    DictionaryUtil.readDictionaryAsEnvVariables(context.getDictionaryPath(), context.getEncoding()));
             Process process = processBuilder.start();
             BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
