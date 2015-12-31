@@ -23,8 +23,6 @@ public class ProcessorFactory {
     public static final String JAVA_PROCESSOR = "java-processor";
 
     public static Processor createProcessor(ProcessorConfig config) throws ProcessorCreationException {
-        Processor processor = null;
-
         String processorName = config.getName();
 
         if (LOCAL_CONFD_PROCESSOR.equals(processorName)) {

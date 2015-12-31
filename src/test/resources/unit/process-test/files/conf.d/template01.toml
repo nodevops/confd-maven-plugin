@@ -1,0 +1,6 @@
+[template]
+src = "template01.tmpl"
+dest = "${basedir}/target/process-mojo-confd/file01.properties"
+keys = [
+"/web",
+]

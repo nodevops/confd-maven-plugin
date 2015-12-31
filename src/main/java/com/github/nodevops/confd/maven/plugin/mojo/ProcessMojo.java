@@ -2,6 +2,7 @@ package com.github.nodevops.confd.maven.plugin.mojo;
 
 import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
 import com.github.nodevops.confd.maven.plugin.processors.*;
+import com.github.nodevops.confd.maven.plugin.utils.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -11,10 +12,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 
-/**
- * Created by pseillier on 21/12/2015.
- */
-@Mojo( name = "process", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true)
+@Mojo(name = "process", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true)
 public class ProcessMojo extends AbstractMojo {
 
     /**
@@ -23,7 +21,7 @@ public class ProcessMojo extends AbstractMojo {
     @Parameter(property = "encoding", defaultValue = "${project.build.sourceEncoding}")
     protected String encoding;
     /**
-     * The output directory into which to copy the resources.
+     * The output directory into which the resources will be copied.
      */
     @Parameter(defaultValue = "${project.basedir}/target/confd", required = true)
     private File workingDirectory;
@@ -45,14 +43,11 @@ public class ProcessMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         if (skipProcess) {
-            getLog().info("confd:process have been skipped per configuration of confd.skipProcess the  parameter.");
+            getLog().info("confd:process has been skipped per configuration of the 'confd.skipProcess' parameter.");
             return;
         }
         getLog().info("confd:process execution");
-        // If the dictionary path is relative then add the project dir path to make an absolute path
-        if (!dictionary.isAbsolute()) {
-            dictionary = new File(basedir, dictionary.getPath());
-        }
+        dictionary = FileUtils.makeAbsoluteIfNeeded(dictionary, basedir);
 
         // the dictionary file must exists
         if (!dictionary.exists()) {
@@ -71,12 +66,12 @@ public class ProcessMojo extends AbstractMojo {
                 .encoding(encoding)
                 .build();
 
-            getLog().info("Excecute processor " + this.processor.getName());
+            getLog().info("Executing processor " + this.processor.getName());
             processor.process(context);
         } catch (ProcessorCreationException e) {
             throw new MojoExecutionException("Unable to create processor " + processor, e);
         } catch (ProcessorExecutionException e) {
-            throw new MojoExecutionException("Unable to execute processor " + processor , e);
+            throw new MojoExecutionException("Unable to execute processor " + processor, e);
         }
 
     }

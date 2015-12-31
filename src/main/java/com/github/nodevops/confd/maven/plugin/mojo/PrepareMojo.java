@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 /**
  * Created by pseillier on 21/12/2015.
  */
-@Mojo( name = "prepare", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = false)
+@Mojo(name = "prepare", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = false)
 public class PrepareMojo extends AbstractMojo {
 
     /**
@@ -40,21 +40,37 @@ public class PrepareMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         if (skipPrepare) {
-            getLog().info("confd:prepare have been skipped per configuration of confd.skipPrepare parameter.");
+            getLog().info("confd:prepare has been skipped per configuration of the confd.skipPrepare parameter.");
             return;
         }
         getLog().info("confd:prepare execution");
+        checkRequirements();
 
 
+        // This is the real execution block
+        try {
+
+            // generate the "confd like" working directory which will contain the toml and template files
+            WorkingDirectoryUtil.generateConfdArtefacts(workingDirectory, templates);
+
+        } catch (IOException e) {
+            throw new MojoExecutionException("Unable to generate confd artefacts in " + workingDirectory + " for templates " + templates, e);
+        }
+    }
+
+    void checkRequirements() throws MojoExecutionException {
         // configure templates full path if necessary
+        int index = 0;
         for (TemplateConfig t : templates) {
+
             // the template source path can be relative to the ${project.basedir}
             if (!t.getSrc().isAbsolute()) {
                 t.setSrc(new File(basedir, t.getSrc().getPath()));
             }
             // the source template file must exist !!
             if (!t.getSrc().exists()) {
-                throw new MojoExecutionException("template src " + t.getSrc() + " does not exits");
+                throw new MojoExecutionException("template src " + t.getSrc() +
+                    " does not exits for Template with index <" + index + "> and id <" + t.getId() + ">");
             }
 
             // the template destination path can be relative to the ${project.basedir}
@@ -68,21 +84,11 @@ public class PrepareMojo extends AbstractMojo {
             // As the plugin create the output directories it will create  ${unknown.property}/target/confd directory. This is a bad behavior.
             // So if the final path contains a ${...} expression the plugin must throw an exception
             if (Pattern.matches(".*\\$\\{.*\\}.*", t.getDest().getPath())) {
-                throw new MojoExecutionException("template dest " + t.getDest() + " is not a valid path");
+                throw new MojoExecutionException("template dest " + t.getDest() +
+                    " is not a valid path for Template with index <" + index + "> and id <" + t.getId() + ">");
             }
 
         }
-
-        // This is the real execution block
-        try {
-
-            // generate the "confd like" working directory which will contain the toml and template files
-            WorkingDirectoryUtil.generateConfdArtefacts(workingDirectory, templates);
-
-        } catch (IOException e) {
-            throw new MojoExecutionException("Unable to generate confd artefacts in " + workingDirectory + " for templates " + templates, e);
-        }
-
     }
 
 
