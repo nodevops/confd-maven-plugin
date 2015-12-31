@@ -10,8 +10,16 @@
     <url>https://github.com/nodevops/confd-maven-plugin</url>
 
     <properties>
+        <!-- project config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.version>3.1.1</maven.version>
+
+        <confd.local.path.for.tests>/home/cfurmaniak/workspace/SANDBOXES/confd-test/confd-linux-amd64-0.11.0</confd.local.path.for.tests>
+        <!-- dependencies -->
+        <lombok.version>1.16.6</lombok.version>
+        <junit.version>4.12</junit.version>
+        <assertj-core.version>2.2.0</assertj-core.version>
+        <!-- maven plugins -->
         <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
         <mavenSitePluginVersion>3.4</mavenSitePluginVersion>
         <mavenProjectInfoReportsPluginVersion>2.8</mavenProjectInfoReportsPluginVersion>
@@ -21,6 +29,7 @@
         <mavenPmdPluginVersion>3.6</mavenPmdPluginVersion>
         <mavenSurefireReportPluginVersion>2.19</mavenSurefireReportPluginVersion>
         <asciidoctorMavenPluginVersion>1.5.3</asciidoctorMavenPluginVersion>
+        <maven-plugin-testing-harness.version>3.1.0</maven-plugin-testing-harness.version>
     </properties>
 
     <prerequisites>
@@ -92,17 +101,23 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- FOR TESTING -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>3.1.0</version>
+            <version>${maven-plugin-testing-harness.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -114,12 +129,18 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>2.2.0</version>
+            <version>${assertj-core.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <pluginManagement>
             <plugins>
                 <plugin>
