@@ -2,7 +2,9 @@ package com.github.nodevops.confd.maven.plugin;
 
 import com.github.nodevops.confd.maven.plugin.mojo.ProcessMojo;
 import org.apache.commons.io.FileUtils;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.testing.MojoRule;
+import org.codehaus.plexus.interpolation.os.OperatingSystemUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,6 +13,7 @@ import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Created by pseillier on 21/12/2015.
@@ -33,8 +36,9 @@ public class ProcessMojoTest extends AbstractTest {
     }
 
     @Test
-    public void testPluginConfiguration() throws Exception {
-
+    public void testMojoExecution() throws Exception {
+        assumeTrue(!TestUtils.isRunningOnWindows());
+        System.out.println("Running this test because I'm not running on Windows");
         File pomFile = new File(basedir, "target/test-classes/unit/process-test/pom.xml");
         assertThat(pomFile).isNotNull();
         assertThat(pomFile).exists();
