@@ -134,12 +134,12 @@ function toggleDisplay(elementId) {
 <th>Success Rate</th>
 <th>Time</th></tr>
 <tr class="b">
-<td>5</td>
+<td>10</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
-<td>80%</td>
-<td>1.913</td></tr></table><br />
+<td>90%</td>
+<td>1.803</td></tr></table><br />
 <p>Note: failures are anticipated and checked for with assertions while errors are unanticipated.</p><br /></div>
 <div class="section">
 <h2><a name="Package_List"></a>Package List</h2><a name="Package_List"></a>
@@ -154,14 +154,43 @@ function toggleDisplay(elementId) {
 <th>Success Rate</th>
 <th>Time</th></tr>
 <tr class="b">
+<td><a href="#com.github.nodevops.confd.maven.plugin.utils">com.github.nodevops.confd.maven.plugin.utils</a></td>
+<td>8</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100%</td>
+<td>0.023</td></tr>
+<tr class="a">
 <td><a href="#com.github.nodevops.confd.maven.plugin">com.github.nodevops.confd.maven.plugin</a></td>
-<td>5</td>
+<td>2</td>
 <td>1</td>
 <td>0</td>
 <td>0</td>
-<td>80%</td>
-<td>1.913</td></tr></table><br />
+<td>50%</td>
+<td>1.78</td></tr></table><br />
 <p>Note: package statistics are not computed recursively, they only sum up all of its testsuites numbers.</p>
+<div class="section">
+<h3><a name="com.github.nodevops.confd.maven.plugin.utils"></a>com.github.nodevops.confd.maven.plugin.utils</h3><a name="com.github.nodevops.confd.maven.plugin.utils"></a>
+<table border="1" class="bodyTable">
+<tr class="a">
+<th></th>
+<th>Class</th>
+<th>Tests</th>
+<th>Errors </th>
+<th>Failures</th>
+<th>Skipped</th>
+<th>Success Rate</th>
+<th>Time</th></tr>
+<tr class="b">
+<td><a href="#com.github.nodevops.confd.maven.plugin.utilsDictionaryUtilTest"><img src="images/icon_success_sml.gif" alt="" /></a></td>
+<td><a href="#com.github.nodevops.confd.maven.plugin.utilsDictionaryUtilTest">DictionaryUtilTest</a></td>
+<td>8</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>100%</td>
+<td>0.023</td></tr></table></div>
 <div class="section">
 <h3><a name="com.github.nodevops.confd.maven.plugin"></a>com.github.nodevops.confd.maven.plugin</h3><a name="com.github.nodevops.confd.maven.plugin"></a>
 <table border="1" class="bodyTable">
@@ -182,17 +211,8 @@ function toggleDisplay(elementId) {
 <td>0</td>
 <td>0</td>
 <td>0%</td>
-<td>0.317</td></tr>
+<td>0.358</td></tr>
 <tr class="a">
-<td><a href="#com.github.nodevops.confd.maven.pluginDictionaryUtilTest"><img src="images/icon_success_sml.gif" alt="" /></a></td>
-<td><a href="#com.github.nodevops.confd.maven.pluginDictionaryUtilTest">DictionaryUtilTest</a></td>
-<td>3</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>100%</td>
-<td>0.007</td></tr>
-<tr class="b">
 <td><a href="#com.github.nodevops.confd.maven.pluginPrepareMojoTest"><img src="images/icon_success_sml.gif" alt="" /></a></td>
 <td><a href="#com.github.nodevops.confd.maven.pluginPrepareMojoTest">PrepareMojoTest</a></td>
 <td>1</td>
@@ -200,7 +220,7 @@ function toggleDisplay(elementId) {
 <td>0</td>
 <td>0</td>
 <td>100%</td>
-<td>1.589</td></tr></table></div><br /></div>
+<td>1.422</td></tr></table></div><br /></div>
 <div class="section">
 <h2><a name="Test_Cases"></a>Test Cases</h2><a name="Test_Cases"></a>
 <p>[<a href="#Summary">Summary</a>] [<a href="#Package_List">Package List</a>] [<a href="#Test_Cases">Test Cases</a>]</p>
@@ -211,7 +231,7 @@ function toggleDisplay(elementId) {
 <td><a href="#com.github.nodevops.confd.maven.plugin.ProcessorMojoTest.testPluginConfiguration"><img src="images/icon_error_sml.gif" alt="" /></a></td>
 <td><a name="TC_com.github.nodevops.confd.maven.plugin.ProcessorMojoTest.testPluginConfiguration"></a><a href="#com.github.nodevops.confd.maven.plugin.ProcessorMojoTest.testPluginConfiguration">testPluginConfiguration</a>
 <div class="detailToggle" style="display:inline"><a href="javascript:toggleDisplay(&apos;com.github.nodevops.confd.maven.plugin.ProcessorMojoTest.testPluginConfiguration&apos;);"><span style="display:inline;" id="com.github.nodevops.confd.maven.plugin.ProcessorMojoTest.testPluginConfigurationoff"> + </span><span style="display:none;" id="com.github.nodevops.confd.maven.plugin.ProcessorMojoTest.testPluginConfigurationon"> - </span>[ Detail ]</a></div></td>
-<td>0.317</td></tr>
+<td>0.358</td></tr>
 <tr class="b">
 <td></td>
 <td>Unable to create processor ProcessorConfig{name='local-confd-processor', properties={binary.path=/Users/pseillier/development/tools/confd}}</td>
@@ -263,27 +283,47 @@ Caused by: com.github.nodevops.confd.maven.plugin.processors.ProcessorCreationEx
 	... 33 more</pre></div></div></td>
 <td></td></tr></table></div>
 <div class="section">
-<h3><a name="DictionaryUtilTest"></a>DictionaryUtilTest</h3><a name="com.github.nodevops.confd.maven.pluginDictionaryUtilTest"></a>
+<h3><a name="DictionaryUtilTest"></a>DictionaryUtilTest</h3><a name="com.github.nodevops.confd.maven.plugin.utilsDictionaryUtilTest"></a>
 <table border="1" class="bodyTable">
 <tr class="a">
 <td><img src="images/icon_success_sml.gif" alt="" /></td>
-<td><a name="TC_com.github.nodevops.confd.maven.plugin.DictionaryUtilTest.shouldFailDueToDictionaryWithoutKeyValue"></a>shouldFailDueToDictionaryWithoutKeyValue</td>
-<td>0.002</td></tr>
+<td><a name="TC_com.github.nodevops.confd.maven.plugin.utils.DictionaryUtilTest.shouldTrimKeyName"></a>shouldTrimKeyName</td>
+<td>0.008</td></tr>
 <tr class="b">
 <td><img src="images/icon_success_sml.gif" alt="" /></td>
-<td><a name="TC_com.github.nodevops.confd.maven.plugin.DictionaryUtilTest.shouldFailDueToEmptyDictionary"></a>shouldFailDueToEmptyDictionary</td>
+<td><a name="TC_com.github.nodevops.confd.maven.plugin.utils.DictionaryUtilTest.shouldFailDueToKeyWithoutValue"></a>shouldFailDueToKeyWithoutValue</td>
+<td>0.007</td></tr>
+<tr class="a">
+<td><img src="images/icon_success_sml.gif" alt="" /></td>
+<td><a name="TC_com.github.nodevops.confd.maven.plugin.utils.DictionaryUtilTest.shouldFailDueToDictionaryWithoutKeyValue"></a>shouldFailDueToDictionaryWithoutKeyValue</td>
+<td>0.001</td></tr>
+<tr class="b">
+<td><img src="images/icon_success_sml.gif" alt="" /></td>
+<td><a name="TC_com.github.nodevops.confd.maven.plugin.utils.DictionaryUtilTest.shouldFailDueToEmptyDictionary"></a>shouldFailDueToEmptyDictionary</td>
+<td>0.001</td></tr>
+<tr class="a">
+<td><img src="images/icon_success_sml.gif" alt="" /></td>
+<td><a name="TC_com.github.nodevops.confd.maven.plugin.utils.DictionaryUtilTest.shouldSuccessWithSpacesAroundEqualSeparator"></a>shouldSuccessWithSpacesAroundEqualSeparator</td>
+<td>0.001</td></tr>
+<tr class="b">
+<td><img src="images/icon_success_sml.gif" alt="" /></td>
+<td><a name="TC_com.github.nodevops.confd.maven.plugin.utils.DictionaryUtilTest.shouldSuccessWithValidKeyValues"></a>shouldSuccessWithValidKeyValues</td>
 <td>0.002</td></tr>
 <tr class="a">
 <td><img src="images/icon_success_sml.gif" alt="" /></td>
-<td><a name="TC_com.github.nodevops.confd.maven.plugin.DictionaryUtilTest.shouldFailDueToMalFormedKeyDictionary"></a>shouldFailDueToMalFormedKeyDictionary</td>
-<td>0.003</td></tr></table></div>
+<td><a name="TC_com.github.nodevops.confd.maven.plugin.utils.DictionaryUtilTest.shouldFailDueToMalFormedKeyDictionary"></a>shouldFailDueToMalFormedKeyDictionary</td>
+<td>0.002</td></tr>
+<tr class="b">
+<td><img src="images/icon_success_sml.gif" alt="" /></td>
+<td><a name="TC_com.github.nodevops.confd.maven.plugin.utils.DictionaryUtilTest.shouldKeyEqualCharactersInValue"></a>shouldKeyEqualCharactersInValue</td>
+<td>0.001</td></tr></table></div>
 <div class="section">
 <h3><a name="PrepareMojoTest"></a>PrepareMojoTest</h3><a name="com.github.nodevops.confd.maven.pluginPrepareMojoTest"></a>
 <table border="1" class="bodyTable">
 <tr class="a">
 <td><img src="images/icon_success_sml.gif" alt="" /></td>
 <td><a name="TC_com.github.nodevops.confd.maven.plugin.PrepareMojoTest.testPluginConfiguration"></a>testPluginConfiguration</td>
-<td>1.589</td></tr></table></div><br /></div>
+<td>1.422</td></tr></table></div><br /></div>
 <div class="section">
 <h2><a name="Failure_Details"></a>Failure Details</h2><a name="Failure_Details"></a>
 <p>[<a href="#Summary">Summary</a>] [<a href="#Package_List">Package List</a>] [<a href="#Test_Cases">Test Cases</a>]</p><br />
