@@ -25,8 +25,8 @@ public class WorkingDirectoryUtil {
         FileUtils.mkdir(templatesDirectory.getAbsolutePath());
         FileUtils.mkdir(tomlDirectory.getAbsolutePath());
         for (TemplateConfig tc : templates) {
-            String tomlBaseName=FileUtils.basename(tc.getSrc().getAbsolutePath())+"toml";
-            File tomlFile = new File(tomlDirectory,tomlBaseName);
+            String tomlBaseName = FileUtils.basename(tc.getSrc().getAbsolutePath()) + "toml";
+            File tomlFile = new File(tomlDirectory, tomlBaseName);
             writeToml(tomlFile, tc);
 
             FileUtils.copyFileToDirectory(tc.getSrc(), templatesDirectory);
