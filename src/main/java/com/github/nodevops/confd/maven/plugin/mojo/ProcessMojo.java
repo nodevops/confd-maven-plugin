@@ -14,7 +14,7 @@ import java.io.File;
 /**
  * Created by pseillier on 21/12/2015.
  */
-@Mojo( name = "process", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true)
+@Mojo(name = "process", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true)
 public class ProcessMojo extends AbstractMojo {
 
     /**
@@ -76,7 +76,7 @@ public class ProcessMojo extends AbstractMojo {
         } catch (ProcessorCreationException e) {
             throw new MojoExecutionException("Unable to create processor " + processor, e);
         } catch (ProcessorExecutionException e) {
-            throw new MojoExecutionException("Unable to execute processor " + processor , e);
+            throw new MojoExecutionException("Unable to execute processor " + processor, e);
         }
 
     }

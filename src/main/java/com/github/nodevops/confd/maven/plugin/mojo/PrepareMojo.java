@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 /**
  * Created by pseillier on 21/12/2015.
  */
-@Mojo( name = "prepare", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = false)
+@Mojo(name = "prepare", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = false)
 public class PrepareMojo extends AbstractMojo {
 
     /**
