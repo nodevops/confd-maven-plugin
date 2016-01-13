@@ -34,7 +34,7 @@ public class JavaProcessorImplTest extends AbstractTest {
         testDir = temporaryFolder.newFolder();
         dictionaryFile = new File(testDir, "dictionaries/env01.dict");
 
-
+        FileUtils.mkdir(new File(testDir, "conf.d").getAbsolutePath());
         FileUtils.copyDirectoryStructure(resourcesDir, testDir);
 
     }
@@ -50,6 +50,7 @@ public class JavaProcessorImplTest extends AbstractTest {
         templateConfig.setSrc(new File("template01.tmpl"));
         templateConfig.setDest(destinationFile);
         templateConfig.setKeys(new String[]{"/web"});
+
 
         WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);
 
