@@ -109,13 +109,11 @@ public class DictionaryUtil {
         }
         if (convertToEnv) {
             // convert confd key format /part1/part2/.../... to shell variable PART1_PART2_..._...
-            String upperCaseKey = StringUtils.stripStart(key, "/").toUpperCase();
-
             result = StringUtils.stripStart(key, "/").toUpperCase().replace('/', '_');
         } else {
             result = key;
         }
-        return key;
+        return result;
     }
 
 }
