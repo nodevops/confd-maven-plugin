@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,13 +53,26 @@ public class JavaProcessorImpl implements Processor {
         String dest = toml.getString("template.dest");
         List<String> keys = toml.getList("template.keys");
 
+        if(keys==null || keys.size()==0) {
+            throw new IOException("toml file " + tomlFile + " keys section must exist and must contain at least one key");
+        }
+
+        // filter the env map according to the keys defined in the toml
+        HashMap<String,String> filteredEnv=new HashMap<String, String>();
+        for(Map.Entry<String,String> entry : env.entrySet()) {
+            for(String key : keys) {
+                if(entry.getKey().startsWith(key)) {
+                    filteredEnv.put(entry.getKey(),entry.getValue());
+                }
+            }
+        }
         File templateFile = new File(templatesDirectory, src);
         File destFile = new File(dest);
 
 
         Parser parser = new Parser(templateFile, encoding);
 
-        String parsedTemplate = parser.parse(env);
+        String parsedTemplate = parser.parse(filteredEnv);
         FileUtils.fileWrite(destFile, encoding, parsedTemplate);
     }
 }
