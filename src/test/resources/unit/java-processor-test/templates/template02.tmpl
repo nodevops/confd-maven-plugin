@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config ns="http://com.github.nodevops/confd/maven/plugin/test/conf">
+    <database>
+        <driver>mysql</driver>
+        <url>{{ getv "/web/database/url" }}</url>
+        <username>{{ getv "/web/database/username" }}</username>
+        <password>{{ getv "/web/database/password" }}</password>
+    </database>
+</config>

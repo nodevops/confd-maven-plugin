@@ -1,7 +1,6 @@
 package com.github.nodevops.confd.maven.plugin.mojo;
 
 import com.github.nodevops.confd.maven.plugin.AbstractTest;
-import com.github.nodevops.confd.maven.plugin.mojo.PrepareMojo;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Before;
 import org.junit.Rule;

@@ -1,5 +1,6 @@
 package com.github.nodevops.confd.maven.plugin.utils;
 
+import com.github.nodevops.confd.maven.plugin.AbstractTest;
 import org.codehaus.plexus.util.FileUtils;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.core.IsInstanceOf;
@@ -17,14 +18,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created by pseillier on 28/12/2015.
  */
-public class DictionaryUtilTest {
+public class DictionaryUtilTest extends AbstractTest{
 
     private static final String ENCODING = "UTF-8";
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder = new TemporaryFolder(new File(getBaseDir(),"target"));
 
     @Test
     public void shouldFailDueToEmptyDictionary() throws Exception {

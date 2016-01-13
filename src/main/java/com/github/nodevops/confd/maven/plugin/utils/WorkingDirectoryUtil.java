@@ -35,7 +35,7 @@ public class WorkingDirectoryUtil {
     }
 
 
-    private static void writeToml(File tomlFile, TemplateConfig tc) throws IOException {
+    public static void writeToml(File tomlFile, TemplateConfig tc) throws IOException {
         StringWriter sw = new StringWriter();
         sw.append("[template]").append('\n');
         sw.append("src = ").append('"').append(FileUtils.removePath(tc.getSrc().getPath())).append('"').append('\n');

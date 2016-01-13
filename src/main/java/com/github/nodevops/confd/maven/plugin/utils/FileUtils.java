@@ -11,7 +11,7 @@ public class FileUtils {
     }
 
     public static File makeAbsoluteIfNeeded(File input, File basedir) {
-        if(!input.isAbsolute()) {
+        if (!input.isAbsolute()) {
             return new File(basedir, input.getPath());
         } else {
             return input;
