@@ -3,7 +3,6 @@ package com.github.nodevops.confd.maven.plugin.model;
 import lombok.Data;
 
 import java.io.File;
-import java.util.Arrays;
 
 /**
  * Created by pseillier on 21/12/2015.

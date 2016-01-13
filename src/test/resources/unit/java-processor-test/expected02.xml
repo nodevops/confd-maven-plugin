@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config ns="http://com.github.nodevops/confd/maven/plugin/test/conf">
+    <database>
+        <driver>mysql</driver>
+        <url>jdbc:mysql://server/db01</url>
+        <username>user01</username>
+        <password>pwd01</password>
+    </database>
+</config>

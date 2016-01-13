@@ -20,6 +20,7 @@
         <lombok.version>1.16.6</lombok.version>
         <junit.version>4.12</junit.version>
         <assertj-core.version>2.2.0</assertj-core.version>
+        <toml4j.version>0.5.0</toml4j.version>
         <!-- maven plugins -->
         <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
         <mavenSitePluginVersion>3.4</mavenSitePluginVersion>
@@ -32,6 +33,7 @@
         <asciidoctorMavenPluginVersion>1.5.3</asciidoctorMavenPluginVersion>
         <maven-plugin-testing-harness.version>3.1.0</maven-plugin-testing-harness.version>
         <github-site-maven-plugin.version>0.12</github-site-maven-plugin.version>
+
     </properties>
 
     <prerequisites>
@@ -109,6 +111,12 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.moandjiezana.toml</groupId>
+            <artifactId>toml4j</artifactId>
+            <version>${toml4j.version}</version>
+        </dependency>
+
         <!-- FOR TESTING -->
         <dependency>
             <groupId>junit</groupId>

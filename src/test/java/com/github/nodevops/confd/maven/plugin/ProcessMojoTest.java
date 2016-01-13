@@ -2,9 +2,7 @@ package com.github.nodevops.confd.maven.plugin;
 
 import com.github.nodevops.confd.maven.plugin.mojo.ProcessMojo;
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.testing.MojoRule;
-import org.codehaus.plexus.interpolation.os.OperatingSystemUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,7 +10,6 @@ import org.junit.Test;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assume.assumeTrue;
 
 /**
@@ -50,8 +47,8 @@ public class ProcessMojoTest extends AbstractTest {
         rule.setVariableValueToObject(processMojo, "encoding", "UTF-8");
         processMojo.execute();
 
-        assertThat(new File(basedir,"/target/process-mojo-confd/file01.properties")).exists().isFile();
-        assertThat(new File(basedir,"/target/process-mojo-confd/datasource.xml")).exists().isFile();
+        assertThat(new File(basedir, "/target/process-mojo-confd/file01.properties")).exists().isFile();
+        assertThat(new File(basedir, "/target/process-mojo-confd/datasource.xml")).exists().isFile();
     }
 
 

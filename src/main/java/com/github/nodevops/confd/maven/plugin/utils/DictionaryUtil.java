@@ -45,7 +45,24 @@ public class DictionaryUtil {
      * @throws DictionaryException if the file cannot be load or if a key/value is not valid.
      */
     public static Map<String, String> readDictionaryAsEnvVariables(File dictionary, String encoding) throws DictionaryException {
+        return readDictionnary(dictionary, encoding, true);
+    }
 
+    /**
+     * Load the <code>dictionary</code> file into a <code>Map</code> according to the <code>encoding</code>.
+     * <p>
+     * The key names format is unchanged
+     *
+     * @param dictionary the file path to load
+     * @param encoding   the encoding of the file to load
+     * @return a <code>Map</code> representation of the file
+     * @throws DictionaryException if the file cannot be load or if a key/value is not valid.
+     */
+    public static Map<String, String> readDictionaryAsProperties(File dictionary, String encoding) throws DictionaryException {
+        return readDictionnary(dictionary, encoding, false);
+    }
+
+    private static Map<String, String> readDictionnary(File dictionary, String encoding, boolean convertToEnv) throws DictionaryException {
         try {
             List<String> lines = FileUtils.loadFile(dictionary);
             // the file must contain at least one key/value pair
@@ -62,7 +79,7 @@ public class DictionaryUtil {
                 if (StringUtils.isEmpty(split[1])) {
                     throw new DictionaryException("dictionary " + dictionary + " : bad key/value format for " + line);
                 }
-                env.put(normalizeKey(split[0]), split[1]);
+                env.put(normalizeKey(split[0], convertToEnv), split[1]);
 
             }
             return env;
@@ -71,29 +88,34 @@ public class DictionaryUtil {
         } catch (InvalidKeyFormatException e) {
             throw new DictionaryException("unable to load " + dictionary, e);
         }
-
     }
 
     /**
-     * Convert a key from confd format "/part1/part2/...." to  shell variable format "PART1_PART2_....".
+     * Convert a key from confd format "/part1/part2/...." to  shell variable format "PART1_PART2_...."
+     * if the <code>convertToEnv</code> is <code>true</code>, otherwise the key remains unchanged
      * The valid format for the input key is :
      * <code>(/\w+)+</code>
      *
-     * @param key the key to convert
+     * @param key          the key to convert
+     * @param convertToEnv true must convert the key name to to  shell variable format
      * @return a new key in shell variable format
      * @throws DictionaryException - If the key format is not valid
      */
-    private static String normalizeKey(String key) throws InvalidKeyFormatException {
-
+    private static String normalizeKey(String key, boolean convertToEnv) throws InvalidKeyFormatException {
+        String result;
         // check the key format
         if (!Pattern.matches("(/\\w+)+", key)) {
             throw new InvalidKeyFormatException("the key " + key + " format is not valid. Valid format is (/[a-zA-Z0-9]+)+");
         }
-        // convert confd key format /part1/part2/.../... to shell variable PART1_PART2_..._...
-        String upperCaseKey = StringUtils.stripStart(key, "/").toUpperCase();
+        if (convertToEnv) {
+            // convert confd key format /part1/part2/.../... to shell variable PART1_PART2_..._...
+            String upperCaseKey = StringUtils.stripStart(key, "/").toUpperCase();
 
-        return StringUtils.stripStart(key, "/").toUpperCase().replace('/', '_');
-
+            result = StringUtils.stripStart(key, "/").toUpperCase().replace('/', '_');
+        } else {
+            result = key;
+        }
+        return key;
     }
 
 }
