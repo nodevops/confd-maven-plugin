@@ -22,7 +22,7 @@ public class JavaProcessorImplTest extends AbstractTest {
     private static final String ENCODING = "UTF-8";
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public TemporaryFolder temporaryFolder=new TemporaryFolder(new File(getBaseDir(),"target"));;
 
     private File resourcesDir;
     private File testDir;
