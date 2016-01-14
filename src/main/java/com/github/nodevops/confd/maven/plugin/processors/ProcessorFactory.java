@@ -32,19 +32,21 @@ public class ProcessorFactory {
         } else if (JAVA_PROCESSOR.equals(processorName)) {
             return createJavaProcessor();
         } else {
-            throw new ProcessorCreationException("Unknow processor name : " + processorName
-                + " (available processors : local-confd-processor,remote-confd-processor,java-processor)");
+            throw new ProcessorCreationException("Unknow processor name : " + processorName +
+                    " (available processors : local-confd-processor,remote-confd-processor,java-processor)");
         }
     }
 
     private static Processor createLocalConfdProcessor(Properties properties) throws ProcessorCreationException {
         String binaryPathProperty = properties.getProperty("binary.path");
         if (StringUtils.isEmpty(binaryPathProperty)) {
-            throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR + "the binay.path property is missing.");
+            throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR +
+                    "the binay.path property is missing.");
         }
         // check if confd is present
         if (!FileUtils.fileExists(binaryPathProperty)) {
-            throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR + " confd binary " + binaryPathProperty + " does not exists");
+            throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR + " confd binary " +
+                    binaryPathProperty + " does not exists");
         }
         Processor processor = new LocalConfdProcessorImpl(binaryPathProperty);
         return processor;

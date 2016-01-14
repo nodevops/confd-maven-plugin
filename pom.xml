@@ -22,6 +22,7 @@
         <assertj-core.version>2.2.0</assertj-core.version>
         <toml4j.version>0.5.0</toml4j.version>
         <!-- maven plugins -->
+        <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
         <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
         <mavenSitePluginVersion>3.4</mavenSitePluginVersion>
         <mavenProjectInfoReportsPluginVersion>2.8</mavenProjectInfoReportsPluginVersion>
@@ -191,6 +192,30 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <configLocation>checkstyle-checker.xml</configLocation>
+                            <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <failsOnError>true</failsOnError>
+                            <consoleOutput>true</consoleOutput>
+                            <encoding>UTF-8</encoding>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <reporting>
