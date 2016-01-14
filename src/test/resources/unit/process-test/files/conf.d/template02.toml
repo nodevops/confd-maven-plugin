@@ -1,6 +1,6 @@
 [template]
-src = "template02.tmpl"
-dest = "${basedir}/target/process-mojo-confd/datasource.xml"
+src = 'template02.tmpl'
+dest = '${basedir}/target/process-mojo-confd/datasource.xml'
 keys = [
 "/web",
 ]
