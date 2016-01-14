@@ -12,6 +12,8 @@ import java.util.List;
  * Created by pseillier on 22/12/2015.
  */
 public class WorkingDirectoryUtil {
+    private static final char QUOTE = '\'';
+    private static final char LINE_SEPARATOR = '\n';
 
     public static void generateConfdArtefacts(File workingDirectory, List<TemplateConfig> templates) throws IOException {
 
@@ -37,14 +39,34 @@ public class WorkingDirectoryUtil {
 
     public static void writeToml(File tomlFile, TemplateConfig tc) throws IOException {
         StringWriter sw = new StringWriter();
-        sw.append("[template]").append('\n');
-        sw.append("src = ").append('"').append(FileUtils.removePath(tc.getSrc().getPath())).append('"').append('\n');
-        sw.append("dest = ").append('"').append(tc.getDest().getAbsolutePath()).append('"').append('\n');
-        sw.append("keys = [").append('\n');
+        sw.append("[template]")
+            .append(LINE_SEPARATOR);
+
+        sw.append("src = ")
+            .append(QUOTE)
+            .append(FileUtils.removePath(tc.getSrc().getPath()))
+            .append(QUOTE)
+            .append(LINE_SEPARATOR);
+
+        sw.append("dest = ")
+            .append(QUOTE)
+            .append(tc.getDest().getAbsolutePath())
+            .append(QUOTE)
+            .append(LINE_SEPARATOR);
+
+        sw.append("keys = [")
+            .append(LINE_SEPARATOR);
         for (String key : tc.getKeys()) {
-            sw.append('"').append(key).append('"').append(',').append('\n');
+            sw.append(QUOTE)
+                .append(key)
+                .append(QUOTE)
+                .append(',')
+                .append(LINE_SEPARATOR);
         }
-        sw.append(']').append('\n');
+
+        sw.append(']')
+            .append(LINE_SEPARATOR);
+
         FileUtils.fileWrite(tomlFile, "UTF8", sw.toString());
     }
 
