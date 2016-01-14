@@ -1,21 +1,19 @@
 package com.github.nodevops.confd.maven.plugin.processors;
 
-import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
-import com.github.nodevops.confd.maven.plugin.processors.impl.JavaProcessorImpl;
-import com.github.nodevops.confd.maven.plugin.processors.impl.LocalConfdProcessorImpl;
-import com.github.nodevops.confd.maven.plugin.processors.impl.RemoteConfdProcessorImpl;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-/**
- * Created by pseillier on 22/12/2015.
- */
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
+
+import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
+import com.github.nodevops.confd.maven.plugin.processors.impl.JavaProcessorImpl;
+import com.github.nodevops.confd.maven.plugin.processors.impl.LocalConfdProcessorImpl;
+import com.github.nodevops.confd.maven.plugin.processors.impl.RemoteConfdProcessorImpl;
+
 public class ProcessorFactory {
 
     public static final String LOCAL_CONFD_PROCESSOR = "local-confd-processor";
@@ -32,19 +30,21 @@ public class ProcessorFactory {
         } else if (JAVA_PROCESSOR.equals(processorName)) {
             return createJavaProcessor();
         } else {
-            throw new ProcessorCreationException("Unknow processor name : " + processorName
-                + " (available processors : local-confd-processor,remote-confd-processor,java-processor)");
+            throw new ProcessorCreationException("Unknow processor name : " + processorName +
+                    " (available processors : local-confd-processor,remote-confd-processor,java-processor)");
         }
     }
 
     private static Processor createLocalConfdProcessor(Properties properties) throws ProcessorCreationException {
         String binaryPathProperty = properties.getProperty("binary.path");
         if (StringUtils.isEmpty(binaryPathProperty)) {
-            throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR + "the binay.path property is missing.");
+            throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR +
+                    "the binay.path property is missing.");
         }
         // check if confd is present
         if (!FileUtils.fileExists(binaryPathProperty)) {
-            throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR + " confd binary " + binaryPathProperty + " does not exists");
+            throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR + " confd binary " +
+                    binaryPathProperty + " does not exists");
         }
         Processor processor = new LocalConfdProcessorImpl(binaryPathProperty);
         return processor;

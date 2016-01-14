@@ -1,18 +1,15 @@
 package com.github.nodevops.confd.maven.plugin.mojo;
 
-import com.github.nodevops.confd.maven.plugin.AbstractTest;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
+
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.File;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-/**
- * Created by pseillier on 21/12/2015.
- */
+import com.github.nodevops.confd.maven.plugin.AbstractTest;
 
 public class PrepareMojoTest extends AbstractTest {
 
@@ -21,7 +18,6 @@ public class PrepareMojoTest extends AbstractTest {
 
     private File basedir;
     private File workDirectory;
-
 
     @Before
     public void setUp() throws Exception {
@@ -43,6 +39,5 @@ public class PrepareMojoTest extends AbstractTest {
         rule.setVariableValueToObject(mojo, "workingDirectory", workDirectory);
         mojo.execute();
     }
-
 
 }

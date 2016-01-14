@@ -1,8 +1,7 @@
 package com.github.nodevops.confd.maven.plugin.mojo;
 
-import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
-import com.github.nodevops.confd.maven.plugin.processors.*;
-import com.github.nodevops.confd.maven.plugin.utils.FileUtils;
+import java.io.File;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -10,7 +9,14 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
+import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
+import com.github.nodevops.confd.maven.plugin.processors.Processor;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorContextBuilder;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorCreationException;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorExecutionException;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorFactory;
+import com.github.nodevops.confd.maven.plugin.utils.FileUtils;
 
 @Mojo(name = "process", defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true)
 public class ProcessMojo extends AbstractMojo {
@@ -34,7 +40,6 @@ public class ProcessMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.basedir}", readonly = true)
     private File basedir;
-
 
     @Parameter(property = "confd.skipProcess", defaultValue = "false")
     private boolean skipProcess;
@@ -62,9 +67,9 @@ public class ProcessMojo extends AbstractMojo {
             ProcessorContextBuilder processorContextBuilder = new ProcessorContextBuilder();
 
             ProcessorContext context = processorContextBuilder.dictionaryPath(dictionary)
-                .workingDirectory(workingDirectory)
-                .encoding(encoding)
-                .build();
+                    .workingDirectory(workingDirectory)
+                    .encoding(encoding)
+                    .build();
 
             getLog().info("Executing processor " + this.processor.getName());
             processor.process(context);
@@ -75,6 +80,5 @@ public class ProcessMojo extends AbstractMojo {
         }
 
     }
-
 
 }

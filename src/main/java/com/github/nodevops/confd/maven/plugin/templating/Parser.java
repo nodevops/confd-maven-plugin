@@ -1,8 +1,11 @@
 package com.github.nodevops.confd.maven.plugin.templating;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
-
 
 public class Parser {
     private static final char NEW_LINE = '\n';
@@ -112,12 +115,11 @@ public class Parser {
         }
     }
 
-
     private String getErrorMessage(String message, Token t) {
         StringBuilder sb = new StringBuilder("File : ");
         sb.append(templateFile)
-            .append(" [").append(lineNumber).append(',').append(t.getPosition()).append("] : ")
-            .append(message);
+                .append(" [").append(lineNumber).append(',').append(t.getPosition()).append("] : ")
+                .append(message);
 
         return sb.toString();
 

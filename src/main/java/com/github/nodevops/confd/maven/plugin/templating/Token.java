@@ -33,4 +33,3 @@ public class Token {
         return "Token{type=" + this.type + ", value=\'" + this.value + '\'' + '}';
     }
 }
-

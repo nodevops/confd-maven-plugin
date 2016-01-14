@@ -1,14 +1,11 @@
 package com.github.nodevops.confd.maven.plugin.processors.impl;
 
+import java.net.URL;
+
 import com.github.nodevops.confd.maven.plugin.processors.Processor;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorExecutionException;
 
-import java.net.URL;
-
-/**
- * Created by pseillier on 22/12/2015.
- */
 public class RemoteConfdProcessorImpl implements Processor {
     private URL httpURL;
 

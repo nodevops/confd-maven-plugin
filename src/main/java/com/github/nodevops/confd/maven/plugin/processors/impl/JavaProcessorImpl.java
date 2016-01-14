@@ -1,5 +1,13 @@
 package com.github.nodevops.confd.maven.plugin.processors.impl;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.codehaus.plexus.util.FileUtils;
+
 import com.github.nodevops.confd.maven.plugin.processors.Processor;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorExecutionException;
@@ -7,17 +15,7 @@ import com.github.nodevops.confd.maven.plugin.templating.Parser;
 import com.github.nodevops.confd.maven.plugin.utils.DictionaryException;
 import com.github.nodevops.confd.maven.plugin.utils.DictionaryUtil;
 import com.moandjiezana.toml.Toml;
-import org.codehaus.plexus.util.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-/**
- * Created by pseillier on 22/12/2015.
- */
 public class JavaProcessorImpl implements Processor {
 
     @Override
@@ -53,22 +51,21 @@ public class JavaProcessorImpl implements Processor {
         String dest = toml.getString("template.dest");
         List<String> keys = toml.getList("template.keys");
 
-        if(keys==null || keys.size()==0) {
+        if (keys == null || keys.size() == 0) {
             throw new IOException("toml file " + tomlFile + " keys section must exist and must contain at least one key");
         }
 
         // filter the env map according to the keys defined in the toml
-        HashMap<String,String> filteredEnv=new HashMap<String, String>();
-        for(Map.Entry<String,String> entry : env.entrySet()) {
-            for(String key : keys) {
-                if(entry.getKey().startsWith(key)) {
-                    filteredEnv.put(entry.getKey(),entry.getValue());
+        HashMap<String, String> filteredEnv = new HashMap<String, String>();
+        for (Map.Entry<String, String> entry : env.entrySet()) {
+            for (String key : keys) {
+                if (entry.getKey().startsWith(key)) {
+                    filteredEnv.put(entry.getKey(), entry.getValue());
                 }
             }
         }
         File templateFile = new File(templatesDirectory, src);
         File destFile = new File(dest);
-
 
         Parser parser = new Parser(templateFile, encoding);
 

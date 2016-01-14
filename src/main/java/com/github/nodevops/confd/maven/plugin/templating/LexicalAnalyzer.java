@@ -47,7 +47,6 @@ public class LexicalAnalyzer {
 
     private Token nextTokenInTemplateExpression() throws IOException {
         int position = buffer.position();
-        ;
 
         while (buffer.hasRemaining()) {
 

@@ -1,28 +1,26 @@
 package com.github.nodevops.confd.maven.plugin.processors.impl;
 
-import com.github.nodevops.confd.maven.plugin.AbstractTest;
-import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
-import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
-import com.github.nodevops.confd.maven.plugin.processors.ProcessorContextBuilder;
-import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.File;
+
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
+import com.github.nodevops.confd.maven.plugin.AbstractTest;
+import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorContextBuilder;
+import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-/**
- * Created by pseillier on 12/01/2016.
- */
 public class JavaProcessorImplTest extends AbstractTest {
     private static final String ENCODING = "UTF-8";
 
     @Rule
-    public TemporaryFolder temporaryFolder=new TemporaryFolder(new File(getBaseDir(),"target"));;
+    public TemporaryFolder temporaryFolder = new TemporaryFolder(new File(getBaseDir(), "target"));;
 
     private File resourcesDir;
     private File testDir;
@@ -49,16 +47,15 @@ public class JavaProcessorImplTest extends AbstractTest {
         TemplateConfig templateConfig = new TemplateConfig();
         templateConfig.setSrc(new File("template01.tmpl"));
         templateConfig.setDest(destinationFile);
-        templateConfig.setKeys(new String[]{"/web"});
-
+        templateConfig.setKeys(new String[] { "/web" });
 
         WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);
 
         ProcessorContext context = new ProcessorContextBuilder()
-            .workingDirectory(testDir)
-            .dictionaryPath(dictionaryFile)
-            .encoding(ENCODING)
-            .build();
+                .workingDirectory(testDir)
+                .dictionaryPath(dictionaryFile)
+                .encoding(ENCODING)
+                .build();
 
         JavaProcessorImpl javaProcessor = new JavaProcessorImpl();
         javaProcessor.process(context);
@@ -77,15 +74,15 @@ public class JavaProcessorImplTest extends AbstractTest {
         TemplateConfig templateConfig = new TemplateConfig();
         templateConfig.setSrc(new File("template02.tmpl"));
         templateConfig.setDest(destinationFile);
-        templateConfig.setKeys(new String[]{"/web"});
+        templateConfig.setKeys(new String[] { "/web" });
 
         WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);
 
         ProcessorContext context = new ProcessorContextBuilder()
-            .workingDirectory(testDir)
-            .dictionaryPath(dictionaryFile)
-            .encoding(ENCODING)
-            .build();
+                .workingDirectory(testDir)
+                .dictionaryPath(dictionaryFile)
+                .encoding(ENCODING)
+                .build();
 
         JavaProcessorImpl javaProcessor = new JavaProcessorImpl();
         javaProcessor.process(context);
@@ -93,6 +90,5 @@ public class JavaProcessorImplTest extends AbstractTest {
         assertThat(destinationFile).exists();
         assertThat(destinationFile).hasSameContentAs(expetedFile);
     }
-
 
 }
