@@ -57,22 +57,3 @@ This file was converted from AsciiDoc to HTML by the Maven Site module of the As
     </plugins>
 </build>
 ----
-
-image::images/tiger.png[Ghostscript Tiger]
-_By Ghostscript authors (GPL Ghostscript SVN: tiger.eps)[GPL (http://www.gnu.org/licenses/gpl.html)], via Wikimedia Commons_
-
-TIP: Use the include directive to keep your content DRY!
-
-[role="bodyTable"]
-|===
-|languange|1|2
-
-|english
-|one
-|two
-
-|catalan
-|u
-|dos
-
-|===

@@ -1,0 +1,143 @@
+= Coding rules and conventions
+
+
+== Technical Stuff
+
+=== Stack
+
+* Use http://joel-costigliola.github.io/assertj/[AssertJ] for unit tests assertions.
+
+== Best Practice
+
+=== Versioning
+
+http://semver.org/[Semantic Versioning] for the win!
+
+=== SCM Model
+
+* git
+* `master` is the main dev branch and should be deployable at any commit
+* use `feature branches` for new features. The feature branch has to be deleted once it has been merged!
+* the developper that proposes a Pull/Merge Request should NOT be the one that validates the Pull/Merge Request
+* every Pull/Merge Request is reviewed:
+** check that code format is OK
+** check that the commit messages match the conventions
+** check that there are tests for new code and that they are OK and relevant
+* during the Pull/Merge Request live time, ping users in comments if an interaction is needed (using @username in comments)
+
+=== Commit messages
+
+Anatomy of a good commit message:
+
+Here is an extract of a good document that we could use as a starting point (https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit?pli=1#)
+
+==== Format of the commit message
+
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+==== Comment line length
+
+Any line of the commit message cannot be longer 100 characters! This allows the message to be easier to read on github as well as in various git tools.
+
+==== Subject line
+
+Subject line contains succinct description of the change
+
+==== Allowed <type>
+
+* feat (new feature for the user, not a new feature for build script)
+* fix (bug fix for the user, not a fix to a build script)
+* docs (changes to the documentation)
+* style (formatting, missing semi colons, etc; no production code change)
+* refactor (refactoring production code, eg. renaming a variable)
+* test (adding missing tests, refactoring tests; no production code change)
+* chore (updating maven pom, grunt tasks etc; no production code change)
+
+==== Allowed <scope>
+
+Scope could be anything specifying place of the commit change. For example $location, $browser, $compile, $rootScope, ngHref, ngClick, ngView, etc...
+
+
+==== <subject> text
+
+use imperative, present tense: “change” not “changed” nor “changes”
+don't capitalize first letter
+no dot (.) at the end
+
+==== Message body
+
+just as in <subject> use imperative, present tense: “change” not “changed” nor “changes”
+includes motivation for the change and contrasts with previous behavior
+http://365git.tumblr.com/post/3308646748/writing-git-commit-messages
+http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+
+=== Coding Style guide
+
+see https://github.com/twitter/commons/blob/master/src/java/com/twitter/common/styleguide.md with some customization/adjustments though:
+
+* we wrap lines at 140 chars
+* tab width (with spaces): 4
+* don't forget to format your code before pushing to git or get ready to see checkstyle fail the build
+
+The Eclipse formatter configuration _nodevops-profile-java-opening-brace-on-same-line-never-join-wrapped-lines.xml_ can be used to enforce this convention.
+
+=== Checkstyle
+
+In order to enforce the coding style, maven projects have to use the _maven-checkstyle-plugin_ with the rules:
+
+* checkstyle-checker-nodevops
+* checkstyle-suppressions-nodevops
+
+[source,xml]
+.pom.xml extract
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-checkstyle-plugin</artifactId>
+    <version>${maven-checkstyle-plugin.version}</version>
+    <executions>
+        <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <configuration>
+                <configLocation>checkstyle-checker-nodevops.xml</configLocation>
+                <suppressionsLocation>checkstyle-suppressions-nodevops.xml</suppressionsLocation>
+                <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                <failsOnError>true</failsOnError>
+                <consoleOutput>true</consoleOutput>
+                <encoding>UTF-8</encoding>
+            </configuration>
+            <goals>
+                <goal>check</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+=== Imports order
+
+see http://stackoverflow.com/questions/14716283/is-it-possible-for-intellij-to-organize-imports-the-same-way-as-in-eclipse
+
+.import order in Intellij
+----
+set "class count to use import with '*'" to 99 (seems like you cannot turn this off)
+set this ordering (like eclipse defaults):
+static all other,
+blank,
+java.*,
+blank,
+javax.*,
+blank,
+org.*,
+blank,
+com.*,
+blank,
+all other imports
+----
