@@ -1,7 +1,10 @@
 package com.github.nodevops.confd.maven.plugin.mojo;
 
-import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
-import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -9,14 +12,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.regex.Pattern;
+import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
+import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
 
-/**
- * Created by pseillier on 21/12/2015.
- */
 @Mojo(name = "prepare", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = false)
 public class PrepareMojo extends AbstractMojo {
 

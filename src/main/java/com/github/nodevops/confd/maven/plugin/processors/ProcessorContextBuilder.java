@@ -2,9 +2,6 @@ package com.github.nodevops.confd.maven.plugin.processors;
 
 import java.io.File;
 
-/**
- * Created by pseillier on 28/12/2015.
- */
 public class ProcessorContextBuilder {
     private ProcessorContext processorContext;
 
@@ -21,7 +18,6 @@ public class ProcessorContextBuilder {
         processorContext.setWorkingDirectory(workingDirectory);
         return this;
     }
-
 
     public ProcessorContextBuilder encoding(String encoding) {
         processorContext.setEncoding(encoding);

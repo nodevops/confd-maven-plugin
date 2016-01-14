@@ -1,21 +1,19 @@
 package com.github.nodevops.confd.maven.plugin.processors;
 
-import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
-import com.github.nodevops.confd.maven.plugin.processors.impl.JavaProcessorImpl;
-import com.github.nodevops.confd.maven.plugin.processors.impl.LocalConfdProcessorImpl;
-import com.github.nodevops.confd.maven.plugin.processors.impl.RemoteConfdProcessorImpl;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-/**
- * Created by pseillier on 22/12/2015.
- */
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
+
+import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
+import com.github.nodevops.confd.maven.plugin.processors.impl.JavaProcessorImpl;
+import com.github.nodevops.confd.maven.plugin.processors.impl.LocalConfdProcessorImpl;
+import com.github.nodevops.confd.maven.plugin.processors.impl.RemoteConfdProcessorImpl;
+
 public class ProcessorFactory {
 
     public static final String LOCAL_CONFD_PROCESSOR = "local-confd-processor";

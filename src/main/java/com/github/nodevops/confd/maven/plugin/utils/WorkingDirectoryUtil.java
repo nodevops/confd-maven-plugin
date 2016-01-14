@@ -1,16 +1,14 @@
 package com.github.nodevops.confd.maven.plugin.utils;
 
-import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
-/**
- * Created by pseillier on 22/12/2015.
- */
+import org.codehaus.plexus.util.FileUtils;
+
+import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
+
 public class WorkingDirectoryUtil {
     private static final char QUOTE = '\'';
     private static final char LINE_SEPARATOR = '\n';
@@ -35,7 +33,6 @@ public class WorkingDirectoryUtil {
 
         }
     }
-
 
     public static void writeToml(File tomlFile, TemplateConfig tc) throws IOException {
         StringWriter sw = new StringWriter();

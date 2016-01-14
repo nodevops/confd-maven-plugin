@@ -1,20 +1,17 @@
 package com.github.nodevops.confd.maven.plugin;
 
-import com.github.nodevops.confd.maven.plugin.mojo.ProcessMojo;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeTrue;
+
+import java.io.File;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.File;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeTrue;
-
-/**
- * Created by pseillier on 21/12/2015.
- */
+import com.github.nodevops.confd.maven.plugin.mojo.ProcessMojo;
 
 public class ProcessMojoTest extends AbstractTest {
 
@@ -23,7 +20,6 @@ public class ProcessMojoTest extends AbstractTest {
 
     private File basedir;
     private File workDirectory;
-
 
     @Before
     public void setUp() throws Exception {
@@ -50,6 +46,5 @@ public class ProcessMojoTest extends AbstractTest {
         assertThat(new File(basedir, "/target/process-mojo-confd/file01.properties")).exists().isFile();
         assertThat(new File(basedir, "/target/process-mojo-confd/datasource.xml")).exists().isFile();
     }
-
 
 }

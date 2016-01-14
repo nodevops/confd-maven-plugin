@@ -41,7 +41,6 @@ public class ProcessMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}", readonly = true)
     private File basedir;
 
-
     @Parameter(property = "confd.skipProcess", defaultValue = "false")
     private boolean skipProcess;
 
@@ -68,9 +67,9 @@ public class ProcessMojo extends AbstractMojo {
             ProcessorContextBuilder processorContextBuilder = new ProcessorContextBuilder();
 
             ProcessorContext context = processorContextBuilder.dictionaryPath(dictionary)
-                .workingDirectory(workingDirectory)
-                .encoding(encoding)
-                .build();
+                    .workingDirectory(workingDirectory)
+                    .encoding(encoding)
+                    .build();
 
             getLog().info("Executing processor " + this.processor.getName());
             processor.process(context);
@@ -81,6 +80,5 @@ public class ProcessMojo extends AbstractMojo {
         }
 
     }
-
 
 }

@@ -2,15 +2,12 @@ package com.github.nodevops.confd.maven.plugin.processors;
 
 import java.io.File;
 
-/**
- * Created by pseillier on 28/12/2015.
- */
 public class ProcessorContext {
     private File dictionaryPath;
     private File workingDirectory;
     private String encoding;
 
-    /* package */ ProcessorContext() {
+    /* package */ProcessorContext() {
 
     }
 

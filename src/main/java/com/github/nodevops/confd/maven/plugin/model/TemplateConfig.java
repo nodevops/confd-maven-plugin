@@ -1,12 +1,9 @@
 package com.github.nodevops.confd.maven.plugin.model;
 
-import lombok.Data;
-
 import java.io.File;
 
-/**
- * Created by pseillier on 21/12/2015.
- */
+import lombok.Data;
+
 @Data
 public class TemplateConfig {
     public static final String DEFAULT_ID = "undef";

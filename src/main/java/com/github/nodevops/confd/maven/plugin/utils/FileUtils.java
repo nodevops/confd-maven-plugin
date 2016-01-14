@@ -2,9 +2,6 @@ package com.github.nodevops.confd.maven.plugin.utils;
 
 import java.io.File;
 
-/**
- * Created on 31/12/15.
- */
 public class FileUtils {
 
     private FileUtils() {
