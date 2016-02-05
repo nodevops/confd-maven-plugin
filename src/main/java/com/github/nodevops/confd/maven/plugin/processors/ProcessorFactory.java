@@ -39,7 +39,7 @@ public class ProcessorFactory {
         String binaryPathProperty = properties.getProperty("binary.path");
         if (StringUtils.isEmpty(binaryPathProperty)) {
             throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR +
-                    "the binay.path property is missing.");
+                    "the binary.path property is missing.");
         }
         // check if confd is present
         if (!FileUtils.fileExists(binaryPathProperty)) {
