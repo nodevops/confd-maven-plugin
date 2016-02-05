@@ -32,15 +32,25 @@ public class ProcessMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/target/confd", required = true)
     private File workingDirectory;
 
+    /**
+     * The confd processor to use. Can be either "local-confd-processor" to use a local confd binary, or
+     * "java-processor" to use a very simple confd compatible parser written in java.
+     */
     @Parameter(required = true)
     private ProcessorConfig processor;
 
+    /**
+     * The path to the file containing a list of key/value that are referenced in the templates
+     */
     @Parameter(required = true)
     private File dictionary;
 
     @Parameter(defaultValue = "${project.basedir}", readonly = true)
     private File basedir;
 
+    /**
+     * Set skipProcess to true on the command line if you want to disable the process goal
+     */
     @Parameter(property = "confd.skipProcess", defaultValue = "false")
     private boolean skipProcess;
 
