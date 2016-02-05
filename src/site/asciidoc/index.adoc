@@ -1,59 +1,43 @@
 == Confd Maven Plugin
 
-The Confd plugin aims to provide a Maven integration of Confd, a lightweight configuration management tool.
-//:icons: font
+The https://github.com/kelseyhightower/confd[confd] maven plugin aims at integrating *confd*, a lightweight configuration management tool, with maven.
+
+Because we use extensively confd to deal with our environment dependant application configuration files (in a docker data-container for instance),
+and because we want to use the same tool everywhere, starting with the developer workstation, we needed to be able to use confd templates and configuration files
+inside a maven build.
+
+The _confd-maven-plugin_ hence allows you to use confd templates inside your project (instead of using the classical filtering functionalites provided by default by Maven)
+
+Note: because confd is currently not available for the Windows operating system, we provide a workaround in the form of a (very) basic java implementation of confd (only for the _env_ backend) that
+only supports the `getv` template function like in the `{{getv "/myapp/database/url"}}` example.
+
+The _confd-maven-plugin_ provides the notion of _processor_, that will condition the type of _confd_ binary that will be use. The plugin currently
+supports 2 processors:
+
+* the `local-confd-processor` that uses a _real_ confd binary. You can specify your confd binary path by setting the `binary.path` property.
+* the `java-processor` (for windows users) that uses the java confd port
+
+To make the _confd-maven-plugin_ work, you have 3 kind of inputs to provide:
+
+* the equivalent of the `TOML resource config` that you can specify inside the configuration of the plugin (used by the `prepare` goal)
+* the templates that will be processed (file ending by the `.tmpl` extension by convention, used by the `process` goal)
+* the dictionary file that consists in a set of key/value pairs (used by the `process` goal)
+
+The typical usage of this plugin will be to trigger 2 differents kind of execution, through maven profiles. One for the developer workstation, that will
+trigger both the `prepare` and the `process` goals, and one dedicated to prepare something like a zip or a targz file, containing
+the templates and the resource config files, targeted to be used on _production like_ environment. See the `examples` section.
 
 === Goals Overview
 
-The Confd plugin has two goals:
+The _confd-maven-plugin_ has two goals:
 
-* confd:generate
-* confd:process
-
-This file was converted from AsciiDoc to HTML by the Maven Site module of the Asciidoctor Maven Plugin.
-
-=== Usage
+* confd:prepare: generate the TOML files that can be used by the `process` goal or in order to prepare a config templates bundle for later usage
+* confd:process: processe the templates locally
 
 
-=== Examples
+=== References
 
-[source,xml]
-----
-<build>
-    <plugins>
-        <plugin>
-            <groupId>com.github.nodevops</groupId>
-            <artifactId>confd-maven-plugin</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
-            <configuration>
-                <processor>
-                    <name>local-confd-processor</name>
-                    <properties>
-                        <property>
-                            <name>binary.path</name>
-                            <value>/Users/pseillier/development/tools/confd</value>
-                        </property>
-                    </properties>
-                </processor>
-                <dictionary>src/test/confd/dictionaries/env01.dict</dictionary>
-                <templates>
-                    <template>
-                        <src>src/test/confd/templates/template01.tmpl</src>
-                        <dest>target/confd/file01.properties</dest>
-                        <keys>
-                            <value>/web</value>
-                        </keys>
-                    </template>
-                    <template>
-                        <src>src/test/confd/templates/template02.tmpl</src>
-                        <dest>target/confd/datasource.xml</dest>
-                        <keys>
-                            <value>/web</value>
-                        </keys>
-                    </template>
-                </templates>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
-----
+* https://github.com/kelseyhightower/confd/[confd web site]
+* https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md[confd getting started page]
+* https://golang.org/pkg/text/template/#pkg-overview[golang template engine]
+

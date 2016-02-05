@@ -1,0 +1,58 @@
+=== Examples
+
+[source,xml]
+----
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.github.nodevops</groupId>
+            <artifactId>confd-maven-plugin</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+            <executions>
+                <execution>
+                    <id>prepare</id>
+                    <goals>
+                        <goal>prepare</goal>
+                    </goals>
+                    <configuration>
+                    <templates>
+                        <template>
+                            <src>src/test/confd/templates/template01.tmpl</src>
+                            <dest>target/confd/file01.properties</dest>
+                            <keys>
+                                <value>/web</value>
+                            </keys>
+                        </template>
+                        <template>
+                            <src>src/test/confd/templates/template02.tmpl</src>
+                            <dest>target/confd/datasource.xml.tmpl</dest>
+                            <keys>
+                                <value>/web</value>
+                            </keys>
+                        </template>
+                    </templates>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>generate</id>
+                    <goals>
+                        <goal>process</goal>
+                    </goals>
+                    <configuration>
+                        <processor>
+                            <name>local-confd-processor</name>
+                            <properties>
+                                <property>
+                                    <name>binary.path</name>
+                                    <value>/usr/local/bin/confd</value>
+                                </property>
+                            </properties>
+                        </processor>
+                        <dictionary>src/test/confd/dictionaries/env01.dict</dictionary>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+----
