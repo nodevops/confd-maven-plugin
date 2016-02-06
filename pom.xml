@@ -60,7 +60,18 @@
         <connection>scm:git:git://github.com/nodevops/confd-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:nodevops/confd-maven-plugin.git</developerConnection>
     </scm>
-
+    <distributionManagement>
+        <snapshotRepository>
+            <id>oss-jfrog-org</id>
+            <name>OSS at Jfrog</name>
+            <url>http://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+        </snapshotRepository>
+        <repository>
+            <id>bintray</id>
+            <name>Releases at Jfrog</name>
+            <url>https://api.bintray.com/maven/nodevops/maven/confd-maven-plugin/;publish=1</url>
+        </repository>
+    </distributionManagement>
     <developers>
         <developer>
             <email>pseillier@gmail.com</email>
