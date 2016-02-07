@@ -6,5 +6,15 @@
             <username>${env.CI_GITHUB_USERNAME}</username>
             <password>${env.CI_GITHUB_PASSWORD}</password>
         </server>
+        <server>
+            <id>oss-jfrog-org</id>
+            <username>${env.CI_JFROG_USERNAME}</username>
+            <password>${env.CI_JFROG_PASSWORD}</password>
+        </server>
+        <server>
+            <id>bintray</id>
+            <username>${env.CI_JFROG_USERNAME}</username>
+            <password>${env.CI_JFROG_PASSWORD}</password>
+        </server>
     </servers>
 </settings>
