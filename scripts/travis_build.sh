@@ -43,7 +43,7 @@ function build_started_by_tag(){
 }
 
 function build_started_by_docs_tag(){
-  if [ "${TRAVIS_TAG}" == "docs*" ]; then
+  if [[ "${TRAVIS_TAG}" == docs-* ]]; then
     echo "[Publishing] This build was started the 'docs' tag ${TRAVIS_TAG}"
     return 0
   else
