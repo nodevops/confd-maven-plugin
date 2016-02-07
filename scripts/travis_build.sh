@@ -12,10 +12,10 @@ function heartbeat() {
   hard_timeout=3600  # 1 hour
   heartbeat_interval=10
   counter=0
-  while [[ $counter -lt $hard_timeout ]] && kill -0 "$$" 2>/dev/null; do
+  while [[ ${counter} -lt ${hard_timeout} ]] && kill -0 "$$" 2>/dev/null; do
     echo "(heartbeat $counter)"
 	counter=$(($counter + $heartbeat_interval))
-	sleep $heartbeat_interval
+	sleep ${heartbeat_interval}
   done &
 }
 
@@ -34,20 +34,31 @@ function increment_version() {
 
 function build_started_by_tag(){
   if [ "${TRAVIS_TAG}" == "" ]; then
-    echo "[Publishing] This build was not started by a tag, publishing"
+    echo "[Publishing] This build was not started by a tag"
     return 1
   else
-    echo "[Publishing] This build was started by the tag ${TRAVIS_TAG}, creating release commits"
+    echo "[Publishing] This build was started by the tag ${TRAVIS_TAG}"
     return 0
   fi
 }
 
-function is_pull_request(){
-  if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
-    echo "[Not Publishing] This is a Pull Request"
+function build_started_by_docs_tag(){
+  if [ "${TRAVIS_TAG}" == "docs*" ]; then
+    echo "[Publishing] This build was started the 'docs' tag ${TRAVIS_TAG}"
     return 0
   else
-    echo "[Publishing] This is not a Pull Request"
+    echo "[Publishing] This build was not started by a 'docs' tag "
+    return 1
+  fi
+}
+
+
+function is_pull_request(){
+  if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+    echo "[is_pull_request] This is a Pull Request"
+    return 0
+  else
+    echo "[is_pull_request] This is not a Pull Request"
     return 1
   fi
 }
@@ -75,11 +86,15 @@ function check_travis_branch_equals_travis_tag(){
   fi
 }
 
-function publish(){
-  echo "[Publishing] Publishing..."
-  mvn clean package $MVN_OPTS
+function publish_docs() {
+  echo "[Publishing Docs] Publishing..."
   mvn site -P publish-site --settings maven-settings.xml $MVN_OPTS
-  echo "[Publishing] Done"
+  echo "[Publishing Docs] Done"
+}
+function publish_snapshot(){
+  echo "[Publishing Snapshot] Publishing..."
+  mvn clean deploy --settings maven-settings.xml $MVN_OPTS
+  echo "[Publishing Snapshot] Done"
 }
 
 function do_mvn_release(){
@@ -103,6 +118,7 @@ function do_mvn_release(){
 #  git checkout -B master
 #
 #  PUBLISHING=true ./gradlew --info --stacktrace release -Prelease.useAutomaticVersion=true -PreleaseVersion=${TRAVIS_TAG} -PnewVersion=${new_version}
+   publish_docs
 #  echo "[Publishing] Done"
 }
 
@@ -117,13 +133,18 @@ function run_tests(){
 action=run_tests
 
 if ! is_pull_request; then
-  if build_started_by_tag; then
-    check_travis_branch_equals_travis_tag
-    action=do_mvn_release
-  elif is_travis_branch_master; then
-    action=publish
-  fi
+    if build_started_by_tag; then
+        if build_started_by_docs_tag; then
+            action=publish_docs
+        else
+            check_travis_branch_equals_travis_tag
+            action=do_mvn_release
+        fi
+    elif is_travis_branch_master; then
+        action=publish_snapshot
+    fi
 fi
+
 
 heartbeat
 $action
