@@ -1,4 +1,4 @@
-package com.github.nodevops.confd.maven.plugin;
+package com.github.nodevops.confd.maven.plugin.mojo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
@@ -11,7 +11,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.nodevops.confd.maven.plugin.mojo.ProcessMojo;
+import com.github.nodevops.confd.maven.plugin.AbstractTest;
+import com.github.nodevops.confd.maven.plugin.TestUtils;
 
 public class ProcessMojoTest extends AbstractTest {
 
@@ -46,5 +47,4 @@ public class ProcessMojoTest extends AbstractTest {
         assertThat(new File(basedir, "/target/process-mojo-confd/file01.properties")).exists().isFile();
         assertThat(new File(basedir, "/target/process-mojo-confd/datasource.xml")).exists().isFile();
     }
-
 }

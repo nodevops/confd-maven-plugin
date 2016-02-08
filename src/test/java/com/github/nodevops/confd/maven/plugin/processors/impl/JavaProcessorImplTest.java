@@ -13,14 +13,14 @@ import org.junit.rules.TemporaryFolder;
 import com.github.nodevops.confd.maven.plugin.AbstractTest;
 import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
-import com.github.nodevops.confd.maven.plugin.processors.ProcessorContextBuilder;
 import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
 
 public class JavaProcessorImplTest extends AbstractTest {
     private static final String ENCODING = "UTF-8";
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder(new File(getBaseDir(), "target"));;
+    public TemporaryFolder temporaryFolder = new TemporaryFolder(new File(getBaseDir(), "target"));
+    ;
 
     private File resourcesDir;
     private File testDir;
@@ -38,30 +38,31 @@ public class JavaProcessorImplTest extends AbstractTest {
     }
 
     @Test
-    public void shouldSuccessWithTemplateAsProperties() throws Exception {
+    public void shouldSuccessWithTemplateAsPropertiesAndTargetInANonExistingDirectory() throws Exception {
 
         File tomlFile = new File(testDir, "conf.d/template01.toml");
-        File destinationFile = new File(testDir, "file01.properties");
-        File expetedFile = new File(resourcesDir, "expected01.properties");
+        File destinationFile = new File(testDir, "subDirectory/file01.properties");
+        File expectedFile = new File(resourcesDir, "expected01.properties");
 
         TemplateConfig templateConfig = new TemplateConfig();
         templateConfig.setSrc(new File("template01.tmpl"));
         templateConfig.setDest(destinationFile);
-        templateConfig.setKeys(new String[] { "/web" });
+        templateConfig.setKeys(new String[]{"/web"});
 
         WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);
 
-        ProcessorContext context = new ProcessorContextBuilder()
-                .workingDirectory(testDir)
-                .dictionaryPath(dictionaryFile)
-                .encoding(ENCODING)
-                .build();
+        ProcessorContext context = ProcessorContext.builder()
+            .workingDirectory(testDir)
+            .dictionaryPath(dictionaryFile)
+            .encoding(ENCODING)
+            .mkdirs(true)
+            .build();
 
         JavaProcessorImpl javaProcessor = new JavaProcessorImpl();
         javaProcessor.process(context);
 
         assertThat(destinationFile).exists();
-        assertThat(destinationFile).hasSameContentAs(expetedFile);
+        assertThat(destinationFile).hasSameContentAs(expectedFile);
     }
 
     @Test
@@ -69,26 +70,26 @@ public class JavaProcessorImplTest extends AbstractTest {
 
         File tomlFile = new File(testDir, "conf.d/template02.toml");
         File destinationFile = new File(testDir, "file02.xml");
-        File expetedFile = new File(resourcesDir, "expected02.xml");
+        File expectedFile = new File(resourcesDir, "expected02.xml");
 
         TemplateConfig templateConfig = new TemplateConfig();
         templateConfig.setSrc(new File("template02.tmpl"));
         templateConfig.setDest(destinationFile);
-        templateConfig.setKeys(new String[] { "/web" });
+        templateConfig.setKeys(new String[]{"/web"});
 
         WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);
 
-        ProcessorContext context = new ProcessorContextBuilder()
-                .workingDirectory(testDir)
-                .dictionaryPath(dictionaryFile)
-                .encoding(ENCODING)
-                .build();
+        ProcessorContext context = ProcessorContext.builder()
+            .workingDirectory(testDir)
+            .dictionaryPath(dictionaryFile)
+            .encoding(ENCODING)
+            .build();
 
         JavaProcessorImpl javaProcessor = new JavaProcessorImpl();
         javaProcessor.process(context);
 
         assertThat(destinationFile).exists();
-        assertThat(destinationFile).hasSameContentAs(expetedFile);
+        assertThat(destinationFile).hasSameContentAs(expectedFile);
     }
 
 }

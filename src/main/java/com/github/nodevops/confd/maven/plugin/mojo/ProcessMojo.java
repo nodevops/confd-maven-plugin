@@ -12,7 +12,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
 import com.github.nodevops.confd.maven.plugin.processors.Processor;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
-import com.github.nodevops.confd.maven.plugin.processors.ProcessorContextBuilder;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorCreationException;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorExecutionException;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorFactory;
@@ -49,6 +48,12 @@ public class ProcessMojo extends AbstractMojo {
     private File basedir;
 
     /**
+     * If true (default), the plugin will create directories if needed in order to be able to create the target files
+     */
+    @Parameter(defaultValue = "true", property = "confd.mkdirs")
+    private boolean mkdirs;
+
+    /**
      * Set skipProcess to true on the command line if you want to disable the process goal
      */
     @Parameter(property = "confd.skipProcess", defaultValue = "false")
@@ -73,13 +78,12 @@ public class ProcessMojo extends AbstractMojo {
         try {
             // get the processor according to the <processor></processor> tag defined in the pom.xml
             Processor processor = ProcessorFactory.createProcessor(this.processor);
-            // build the processor execution context
-            ProcessorContextBuilder processorContextBuilder = new ProcessorContextBuilder();
-
-            ProcessorContext context = processorContextBuilder.dictionaryPath(dictionary)
-                    .workingDirectory(workingDirectory)
-                    .encoding(encoding)
-                    .build();
+            ProcessorContext context = ProcessorContext.builder()
+                .dictionaryPath(dictionary)
+                .workingDirectory(workingDirectory)
+                .encoding(encoding)
+                .mkdirs(mkdirs)
+                .build();
 
             getLog().info("Executing processor " + this.processor.getName());
             processor.process(context);
