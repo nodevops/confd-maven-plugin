@@ -24,12 +24,21 @@ public class PrepareMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/target/confd", required = true)
     private File workingDirectory;
 
+    /**
+     * A list of TemplateConfig elements. A TemplateConfig element mimics the content of a confd TOML file (see
+     * https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md#create-a-template-resource-config)
+     * so you can specify the src of the template to parse (src), the destination (dest) and a list of keys
+     * (full list of main namespaces) that are needed by the template. See the examples pages for more details.
+     */
     @Parameter(required = true)
     private List<TemplateConfig> templates;
 
     @Parameter(defaultValue = "${project.basedir}", readonly = true)
     private File basedir;
 
+    /**
+     * Set skipPrepare to true on the command line if you want to disable the prepare goal
+     */
     @Parameter(property = "confd.skipPrepare", defaultValue = "false")
     private boolean skipPrepare;
 
@@ -66,7 +75,7 @@ public class PrepareMojo extends AbstractMojo {
             // the source template file must exist !!
             if (!t.getSrc().exists()) {
                 throw new MojoExecutionException("template src " + t.getSrc() +
-                        " does not exits for Template with index <" + index + "> and id <" + t.getId() + ">");
+                    " does not exits for Template with index <" + index + "> and id <" + t.getId() + ">");
             }
 
             // the template destination path can be relative to the ${project.basedir}
@@ -84,7 +93,7 @@ public class PrepareMojo extends AbstractMojo {
             // So if the final path contains a ${...} expression the plugin must throw an exception
             if (Pattern.matches(".*\\$\\{.*\\}.*", t.getDest().getPath())) {
                 throw new MojoExecutionException("template dest " + t.getDest() +
-                        " is not a valid path for Template with index <" + index + "> and id <" + t.getId() + ">");
+                    " is not a valid path for Template with index <" + index + "> and id <" + t.getId() + ">");
             }
 
         }

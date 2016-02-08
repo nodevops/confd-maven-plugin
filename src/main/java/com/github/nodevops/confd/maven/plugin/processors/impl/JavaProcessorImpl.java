@@ -1,5 +1,8 @@
 package com.github.nodevops.confd.maven.plugin.processors.impl;
 
+import static com.github.nodevops.confd.maven.plugin.processors.impl.ConfdConsts.CONF_D_DIRECTORY;
+import static com.github.nodevops.confd.maven.plugin.processors.impl.ConfdConsts.TEMPLATES_DIRECTORY;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,11 +21,12 @@ import com.moandjiezana.toml.Toml;
 
 public class JavaProcessorImpl implements Processor {
 
+
     @Override
     public void process(ProcessorContext context) throws ProcessorExecutionException {
         // the toml files are in the conf.d sub directory
-        File tomlDirectory = new File(context.getWorkingDirectory(), "conf.d");
-        File templatesDirectory = new File(context.getWorkingDirectory(), "templates");
+        File tomlDirectory = new File(context.getWorkingDirectory(), CONF_D_DIRECTORY);
+        File templatesDirectory = new File(context.getWorkingDirectory(), TEMPLATES_DIRECTORY);
         try {
             // load dictionary
             Map<String, String> env = DictionaryUtil.readDictionaryAsProperties(context.getDictionaryPath(), context.getEncoding());
@@ -31,7 +35,7 @@ public class JavaProcessorImpl implements Processor {
             for (File tomlFile : tomlFiles) {
                 // process each toml file
                 try {
-                    processToml(tomlFile, templatesDirectory, env, context.getEncoding());
+                    processToml(tomlFile, templatesDirectory, env, context.getEncoding(), context.isMkdirs());
                 } catch (IOException e) {
                     throw new ProcessorExecutionException("unable to process toml file  " + tomlFile, e);
                 }
@@ -45,7 +49,13 @@ public class JavaProcessorImpl implements Processor {
         }
     }
 
-    private void processToml(File tomlFile, File templatesDirectory, Map<String, String> env, String encoding) throws IOException {
+    private void processToml(
+        File tomlFile,
+        File templatesDirectory,
+        Map<String, String> env,
+        String encoding,
+        boolean mkdirs
+    ) throws IOException {
         Toml toml = new Toml().read(tomlFile);
         String src = toml.getString("template.src");
         String dest = toml.getString("template.dest");
@@ -66,10 +76,12 @@ public class JavaProcessorImpl implements Processor {
         }
         File templateFile = new File(templatesDirectory, src);
         File destFile = new File(dest);
-
+        if (mkdirs) {
+            destFile.getParentFile().mkdirs();
+        }
         Parser parser = new Parser(templateFile, encoding);
-
         String parsedTemplate = parser.parse(filteredEnv);
         FileUtils.fileWrite(destFile, encoding, parsedTemplate);
     }
 }
+

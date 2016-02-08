@@ -46,8 +46,7 @@ public class ProcessorFactory {
             throw new ProcessorCreationException("processor " + LOCAL_CONFD_PROCESSOR + " confd binary " +
                     binaryPathProperty + " does not exists");
         }
-        Processor processor = new LocalConfdProcessorImpl(binaryPathProperty);
-        return processor;
+        return new LocalConfdProcessorImpl(binaryPathProperty);
     }
 
     private static Processor createWsConfdProcessor(Properties properties) throws ProcessorCreationException {
@@ -64,8 +63,7 @@ public class ProcessorFactory {
     }
 
     private static Processor createJavaProcessor() {
-        Processor processor = new JavaProcessorImpl();
-        return processor;
+        return new JavaProcessorImpl();
     }
 
     private static String getConfdPathFromPATH() {
