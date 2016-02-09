@@ -17,7 +17,7 @@ import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
 import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
 import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
 
-public class LocalProcessorImplTest extends AbstractTest {
+public class LocalConfdProcessorImplTest extends AbstractTest {
     private static final String ENCODING = "UTF-8";
 
     @Rule
@@ -35,7 +35,6 @@ public class LocalProcessorImplTest extends AbstractTest {
 
         FileUtils.mkdir(new File(testDir, "conf.d").getAbsolutePath());
         FileUtils.copyDirectoryStructure(resourcesDir, testDir);
-
     }
 
     @Test
@@ -53,7 +52,7 @@ public class LocalProcessorImplTest extends AbstractTest {
 
         TemplateConfig templateConfig = new TemplateConfig();
         templateConfig.setSrc(new File("template01.tmpl"));
-        templateConfig.setDest(destinationFile);
+        templateConfig.setDest(destinationFile.getPath());
         templateConfig.setKeys(new String[]{"/web"});
 
         WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);

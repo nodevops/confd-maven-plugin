@@ -46,7 +46,7 @@ public class JavaProcessorImplTest extends AbstractTest {
 
         TemplateConfig templateConfig = new TemplateConfig();
         templateConfig.setSrc(new File("template01.tmpl"));
-        templateConfig.setDest(destinationFile);
+        templateConfig.setDest(destinationFile.getPath());
         templateConfig.setKeys(new String[]{"/web"});
 
         WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);
@@ -74,7 +74,7 @@ public class JavaProcessorImplTest extends AbstractTest {
 
         TemplateConfig templateConfig = new TemplateConfig();
         templateConfig.setSrc(new File("template02.tmpl"));
-        templateConfig.setDest(destinationFile);
+        templateConfig.setDest(destinationFile.getPath());
         templateConfig.setKeys(new String[]{"/web"});
 
         WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);
