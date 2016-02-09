@@ -54,10 +54,8 @@ public class PrepareMojo extends AbstractMojo {
 
         // This is the real execution block
         try {
-
             // generate the "confd like" working directory which will contain the toml and template files
             WorkingDirectoryUtil.generateConfdArtefacts(workingDirectory, templates);
-
         } catch (IOException e) {
             throw new MojoExecutionException("Unable to generate confd artefacts in " + workingDirectory + " for templates " + templates, e);
         }
@@ -78,10 +76,6 @@ public class PrepareMojo extends AbstractMojo {
                     " does not exits for Template with index <" + index + "> and id <" + t.getId() + ">");
             }
 
-            // the template destination path can be relative to the ${project.basedir}
-            if (!t.getDest().isAbsolute()) {
-                t.setDest(new File(basedir, t.getDest().getPath()));
-            }
             // The destination path can contain ${...} expressions. In this case the expressions will be handled by maven
             // and replaced by the corresponding values
             // for example : ${project.basedir}/target/confd/file.properties will be converted by maven to <Absolute path of the maven
@@ -91,7 +85,7 @@ public class PrepareMojo extends AbstractMojo {
             // As the plugin create the output directories it will create ${unknown.property}/target/confd directory. This is a bad
             // behavior.
             // So if the final path contains a ${...} expression the plugin must throw an exception
-            if (Pattern.matches(".*\\$\\{.*\\}.*", t.getDest().getPath())) {
+            if (Pattern.matches(".*\\$\\{.*\\}.*", t.getDest())) {
                 throw new MojoExecutionException("template dest " + t.getDest() +
                     " is not a valid path for Template with index <" + index + "> and id <" + t.getId() + ">");
             }

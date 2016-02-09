@@ -1,5 +1,8 @@
 package com.github.nodevops.confd.maven.plugin.utils;
 
+import static com.github.nodevops.confd.maven.plugin.ConfdConsts.CONF_D_DIRECTORY;
+import static com.github.nodevops.confd.maven.plugin.ConfdConsts.TEMPLATES_DIRECTORY;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -15,8 +18,8 @@ public class WorkingDirectoryUtil {
 
     public static void generateConfdArtefacts(File workingDirectory, List<TemplateConfig> templates) throws IOException {
 
-        File templatesDirectory = new File(workingDirectory, "templates");
-        File tomlDirectory = new File(workingDirectory, "conf.d");
+        File templatesDirectory = new File(workingDirectory, TEMPLATES_DIRECTORY);
+        File tomlDirectory = new File(workingDirectory, CONF_D_DIRECTORY);
 
         if (workingDirectory.exists()) {
             FileUtils.deleteDirectory(workingDirectory);
@@ -28,9 +31,7 @@ public class WorkingDirectoryUtil {
             String tomlBaseName = FileUtils.basename(tc.getSrc().getAbsolutePath()) + "toml";
             File tomlFile = new File(tomlDirectory, tomlBaseName);
             writeToml(tomlFile, tc);
-
             FileUtils.copyFileToDirectory(tc.getSrc(), templatesDirectory);
-
         }
     }
 
@@ -47,7 +48,7 @@ public class WorkingDirectoryUtil {
 
         sw.append("dest = ")
             .append(QUOTE)
-            .append(tc.getDest().getAbsolutePath())
+            .append(tc.getResolvedDestPath())
             .append(QUOTE)
             .append(LINE_SEPARATOR);
 

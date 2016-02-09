@@ -1,6 +1,6 @@
 package com.github.nodevops.confd.maven.plugin.processors.impl;
 
-import static com.github.nodevops.confd.maven.plugin.processors.impl.ConfdConsts.CONF_D_DIRECTORY;
+import static com.github.nodevops.confd.maven.plugin.ConfdConsts.CONF_D_DIRECTORY;
 
 import java.io.BufferedReader;
 import java.io.File;

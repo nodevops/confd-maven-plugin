@@ -1,7 +1,7 @@
 package com.github.nodevops.confd.maven.plugin.processors.impl;
 
-import static com.github.nodevops.confd.maven.plugin.processors.impl.ConfdConsts.CONF_D_DIRECTORY;
-import static com.github.nodevops.confd.maven.plugin.processors.impl.ConfdConsts.TEMPLATES_DIRECTORY;
+import static com.github.nodevops.confd.maven.plugin.ConfdConsts.CONF_D_DIRECTORY;
+import static com.github.nodevops.confd.maven.plugin.ConfdConsts.TEMPLATES_DIRECTORY;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +62,8 @@ public class JavaProcessorImpl implements Processor {
         List<String> keys = toml.getList("template.keys");
 
         if (keys == null || keys.size() == 0) {
-            throw new IOException("toml file " + tomlFile + " keys section must exist and must contain at least one key");
+            throw new IOException("Something went wrong while processing the toml file <" + tomlFile +
+                ">: the 'keys' section must exist and contain at least one key");
         }
 
         // filter the env map according to the keys defined in the toml
