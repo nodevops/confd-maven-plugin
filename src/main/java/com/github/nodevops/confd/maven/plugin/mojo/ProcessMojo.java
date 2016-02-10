@@ -66,7 +66,14 @@ public class ProcessMojo extends AbstractMojo {
             getLog().info("confd:process has been skipped per configuration of the 'confd.skipProcess' parameter.");
             return;
         }
-        getLog().info("confd:process execution");
+        getLog().info("plugin configuration {" +
+            " workingDirectory: " + workingDirectory +
+            ", encoding:" + encoding +
+            ", mkdirs:" + mkdirs +
+            ", skipProcess:" + skipProcess +
+            ", dictionary:" + dictionary +
+            ", processor:" + processor.toString() +
+            "}");
         dictionary = FileUtils.makeAbsoluteIfNeeded(dictionary, basedir);
 
         // the dictionary file must exists

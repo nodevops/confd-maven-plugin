@@ -18,6 +18,8 @@ import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
 @Mojo(name = "prepare", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = false)
 public class PrepareMojo extends AbstractMojo {
 
+    public static final String INDEX_AND_ID_SEPARATOR = ":";
+    public static final String ELEMENTS_SEPARATOR = ",";
     /**
      * The output directory into which to copy the resources.
      */
@@ -32,6 +34,15 @@ public class PrepareMojo extends AbstractMojo {
      */
     @Parameter(required = true)
     private List<TemplateConfig> templates;
+
+    /**
+     * by default, the <i>dest</i> param is a String that will be preserved as-is. If you set
+     * <i>forceDestToLocalFileSystemType</i> to true, then it will be transformed as a valid path according to the
+     * OS where the current build is running (for instance, /a/unix/path will be transformed in \\a\\unix\\path under
+     * windows)
+     */
+    @Parameter(property = "confd.forceDestToLocalFileSystemType", defaultValue = "false")
+    private boolean forceDestToLocalFileSystemType;
 
     @Parameter(defaultValue = "${project.basedir}", readonly = true)
     private File basedir;
@@ -49,15 +60,24 @@ public class PrepareMojo extends AbstractMojo {
             getLog().info("confd:prepare has been skipped per configuration of the confd.skipPrepare parameter.");
             return;
         }
-        getLog().info("confd:prepare execution");
+        getLog().info("plugin configuration {" +
+            " forceDestToLocalFileSystemType:" + forceDestToLocalFileSystemType +
+            ", workingDirectory: " + workingDirectory +
+            ", skipPrepare:" + skipPrepare +
+            "}");
         checkRequirements();
+        getLog().info("found <" + templates.size() + "> template(s):");
+        for (TemplateConfig templateConfig : templates) {
+            getLog().info(templateConfig.toString());
+        }
 
         // This is the real execution block
         try {
             // generate the "confd like" working directory which will contain the toml and template files
-            WorkingDirectoryUtil.generateConfdArtefacts(workingDirectory, templates);
+            WorkingDirectoryUtil.generateConfdArtefacts(workingDirectory, templates, forceDestToLocalFileSystemType);
         } catch (IOException e) {
-            throw new MojoExecutionException("Unable to generate confd artefacts in " + workingDirectory + " for templates " + templates, e);
+            throw new MojoExecutionException("Caught an IOException while trying to generate confd artefacts in " +
+                workingDirectory + " for templates " + templates, e);
         }
     }
 
@@ -66,16 +86,23 @@ public class PrepareMojo extends AbstractMojo {
         int index = 0;
         for (TemplateConfig t : templates) {
 
-            // the template source path can be relative to the ${project.basedir}
+            if (t.getSrc() == null) {
+                throw new MojoExecutionException("template src" +
+                    " cannot be null for Template element with index <" + index + "> and id <" + t.getId() + ">");
+            }
             if (!t.getSrc().isAbsolute()) {
                 t.setSrc(new File(basedir, t.getSrc().getPath()));
             }
             // the source template file must exist !!
             if (!t.getSrc().exists()) {
-                throw new MojoExecutionException("template src " + t.getSrc() +
-                    " does not exits for Template with index <" + index + "> and id <" + t.getId() + ">");
+                throw new MojoExecutionException("template src <" + t.getSrc() +
+                    "> does not exits for Template element with index <" + index + "> and id <" + t.getId() + ">");
             }
 
+            if (t.getDest() == null) {
+                throw new MojoExecutionException("template dest " +
+                    " cannot be null for Template element with index <" + index + "> and id <" + t.getId() + ">");
+            }
             // The destination path can contain ${...} expressions. In this case the expressions will be handled by maven
             // and replaced by the corresponding values
             // for example : ${project.basedir}/target/confd/file.properties will be converted by maven to <Absolute path of the maven
@@ -87,10 +114,9 @@ public class PrepareMojo extends AbstractMojo {
             // So if the final path contains a ${...} expression the plugin must throw an exception
             if (Pattern.matches(".*\\$\\{.*\\}.*", t.getDest())) {
                 throw new MojoExecutionException("template dest " + t.getDest() +
-                    " is not a valid path for Template with index <" + index + "> and id <" + t.getId() + ">");
+                    " is not a valid path for Template element with index <" + index + "> and id <" + t.getId() + ">");
             }
-
+            index++;
         }
     }
-
 }

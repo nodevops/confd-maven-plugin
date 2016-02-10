@@ -55,7 +55,7 @@ public class LocalConfdProcessorImplTest extends AbstractTest {
         templateConfig.setDest(destinationFile.getPath());
         templateConfig.setKeys(new String[]{"/web"});
 
-        WorkingDirectoryUtil.writeToml(tomlFile, templateConfig);
+        WorkingDirectoryUtil.writeToml(tomlFile, templateConfig, false);
 
         ProcessorContext context = ProcessorContext.builder()
             .workingDirectory(testDir)
