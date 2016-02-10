@@ -16,7 +16,10 @@ public class WorkingDirectoryUtil {
     private static final char QUOTE = '\'';
     private static final char LINE_SEPARATOR = '\n';
 
-    public static void generateConfdArtefacts(File workingDirectory, List<TemplateConfig> templates) throws IOException {
+    public static void generateConfdArtefacts(
+        File workingDirectory,
+        List<TemplateConfig> templates,
+        boolean forceDestToLocalFileSystemType) throws IOException {
 
         File templatesDirectory = new File(workingDirectory, TEMPLATES_DIRECTORY);
         File tomlDirectory = new File(workingDirectory, CONF_D_DIRECTORY);
@@ -30,12 +33,15 @@ public class WorkingDirectoryUtil {
         for (TemplateConfig tc : templates) {
             String tomlBaseName = FileUtils.basename(tc.getSrc().getAbsolutePath()) + "toml";
             File tomlFile = new File(tomlDirectory, tomlBaseName);
-            writeToml(tomlFile, tc);
+            writeToml(tomlFile, tc, forceDestToLocalFileSystemType);
             FileUtils.copyFileToDirectory(tc.getSrc(), templatesDirectory);
         }
     }
 
-    public static void writeToml(File tomlFile, TemplateConfig tc) throws IOException {
+    public static void writeToml(
+        File tomlFile,
+        TemplateConfig tc,
+        boolean globalForceDestToLocalFileSystemType) throws IOException {
         StringWriter sw = new StringWriter();
         sw.append("[template]")
             .append(LINE_SEPARATOR);
@@ -48,7 +54,7 @@ public class WorkingDirectoryUtil {
 
         sw.append("dest = ")
             .append(QUOTE)
-            .append(tc.getResolvedDestPath())
+            .append(tc.getResolvedDestPath(globalForceDestToLocalFileSystemType))
             .append(QUOTE)
             .append(LINE_SEPARATOR);
 
