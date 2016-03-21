@@ -1,14 +1,14 @@
 package com.github.nodevops.confd.maven.plugin.utils;
 
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Contains some helper methods to handle dictionaries. A dictionary is a file containing key/value pairs. The file may contain comments
@@ -79,10 +79,10 @@ public class DictionaryUtil {
                 if (split.length != 2) {
                     throw new DictionaryException("dictionary " + dictionary + " : bad key/value format for " + line);
                 }
-                if (StringUtils.isEmpty(split[1])) {
-                    throw new DictionaryException("dictionary " + dictionary + " : bad key/value format for " + line);
-                }
-                env.put(normalizeKey(split[0], convertToEnv), split[1]);
+
+                // accept empty key
+                String value=StringUtils.isEmpty(split[1]) ? "" : split[1];
+                env.put(normalizeKey(split[0], convertToEnv), value);
 
             }
             return env;
