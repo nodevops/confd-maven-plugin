@@ -1,5 +1,8 @@
 Linux build: [![Build Status](https://travis-ci.org/nodevops/confd-maven-plugin.svg?branch=master)](https://travis-ci.org/nodevops/confd-maven-plugin)
 
+[![codecov](https://codecov.io/gh/nodevops/confd-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/nodevops/confd-maven-plugin)
+
+
 # confd-maven-plugin
 
 # Contribute
