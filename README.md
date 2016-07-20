@@ -2,8 +2,7 @@ Linux build: [![Build Status](https://travis-ci.org/nodevops/confd-maven-plugin.
 Windows build: [![Build Status](https://tea-ci.org/api/badges/nodevops/confd-maven-plugin/status.svg)](https://tea-ci.org/nodevops/confd-maven-plugin)
 
 [![codecov](https://codecov.io/gh/nodevops/confd-maven-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/nodevops/confd-maven-plugin)
-
-
+[![Dependency Status](https://dependencyci.com/github/nodevops/confd-maven-plugin/badge)](https://dependencyci.com/github/nodevops/confd-maven-plugin)
 # confd-maven-plugin
 
 # Contribute
