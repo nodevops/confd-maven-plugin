@@ -6,7 +6,7 @@ Because we use extensively confd to deal with our environment dependant applicat
 and because we want to use the same tool everywhere, starting with the developer workstation, we needed to be able to use confd templates and configuration files
 inside a maven build.
 
-The _confd-maven-plugin_ hence allows you to use confd templates inside your project (instead of using the classical filtering functionalites provided by default by Maven)
+The _confd-maven-plugin_ hence allows you to use confd templates inside your project (instead of using the classical filtering features provided by default by Maven)
 
 Note: because confd is currently not available for the Windows operating system, we provide a workaround in the form of a (very) basic java implementation of confd (only for the _env_ backend) that
 only supports the `getv` template function like in the `{{getv "/myapp/database/url"}}` example.
