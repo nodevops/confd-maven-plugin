@@ -1,4 +1,12 @@
-=== Examples
+== Examples
+
+
+=== Basic usage: prepare + generate in a single step
+
+Let's say that you have 2 files to generate, `file01.properties` and `datasource.xml`, in the `target/generated-configuration` directory, you can use the following configuration.
+
+By convention, maven-confd-plugin templates and dictionaries are located in `src/main/confd/templates` and `src/main/confd/dictionaries`
+
 
 [source,xml]
 ----
@@ -17,15 +25,15 @@
                     <configuration>
                     <templates>
                         <template>
-                            <src>src/test/confd/templates/template01.tmpl</src>
-                            <dest>target/confd/file01.properties</dest>
+                            <src>src/main/confd/templates/template01.tmpl</src>
+                            <dest>target/generated-configuration/file01.properties</dest>
                             <keys>
                                 <value>/web</value>
                             </keys>
                         </template>
                         <template>
-                            <src>src/test/confd/templates/template02.tmpl</src>
-                            <dest>target/confd/datasource.xml.tmpl</dest>
+                            <src>src/main/confd/templates/template02.tmpl</src>
+                            <dest>target/generated-configuration/datasource.xml.tmpl</dest>
                             <keys>
                                 <value>/web</value>
                             </keys>
@@ -48,11 +56,164 @@
                                 </property>
                             </properties>
                         </processor>
-                        <dictionary>src/test/confd/dictionaries/env01.dict</dictionary>
+                        <dictionary>src/main/confd/dictionaries/env01.dict</dictionary>
                     </configuration>
                 </execution>
             </executions>
         </plugin>
     </plugins>
 </build>
+----
+
+This example does not really match a real case usage though, because you usally don't deploy on your local dev environment, do you?
+
+=== Typical use case : local development + delivery package
+
+A full example of this setup can be found in the https://github.com/nodevops/confd-maven-plugin-sample-usages/tree/master/springboot-sample[spring-boot sample] in our https://github.com/nodevops/confd-maven-plugin-sample-usages[sample usages project].
+
+==== Local Development
+
+We want to be able to generate our config file for the local dev environment, and use it, so:
+
+* we rely on the common/shared configuration (i.e. not associated to a specific profile) that calls the _prepare_ goal of the plugin. The _prepare_ goal will generate a *confd* _toml_ configuration file that would target a final generated file in the `target/generated-configuration` directory
+* we activate a `run-local` profile that triggers the _generate_ goal that will process the template according to our local dictionary stored in `src/main/confd/dictionary/local.dict`
+* because we want the build to be independent of the dev environment, we use the _java-processor_ that doesn't rely on the _confd_ binary
+* the `run-local` profile also specifies to springboot where it can find its config file (through the springboot plugin)
+
+==== Get ready for the delivery
+
+We want to generate a configuration artifact that will carry the templates and the ready to use confd toml files
+
+* we rely on the common/shared configuration, that only calls the _prepare_ goal
+* we use a dedicated `delivery` profile that overrides the final destination of the target file (that will be stored in the _toml_ config file)
+* the same `delivery` profile uses the assembly plugin to generate a zip file that can be unzipped as-is in the `/etc/confd` directory on the destination server(s). This is the default directory structure expected by the confd binary
+
+==== pom.xml extract
+
+[source,xml]
+----
+...
+<build>
+    <plugins>
+    ...
+    <plugin>
+        <groupId>com.github.nodevops</groupId>
+        <artifactId>confd-maven-plugin</artifactId>
+        <executions>
+            <execution>
+                <!-- common step shared by all profiles that prepare the config file for further usage /-->
+                <id>prepare</id>
+                <goals>
+                    <goal>prepare</goal>
+                </goals>
+                <configuration>
+                    <forceDestToLocalFileSystemType>true</forceDestToLocalFileSystemType>
+                    <templates>
+                        <template>
+                            <id>application.yml</id>
+                            <src>src/main/confd/templates/application.yml.tmpl</src>
+                            <dest>${project.basedir}/target/generated-configuration/application.yml</dest>
+                            <keys>
+                                <value>/your/namespace</value>
+                                <value>/runtime</value>
+                            </keys>
+                        </template>
+                    </templates>
+                </configuration>
+            </execution>
+        </executions>
+    </plugin>
+    ...
+    </plugins>
+</build>
+...
+<profiles>
+    <profile>
+        <id>run-local</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.nodevops</groupId>
+                    <artifactId>confd-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <!-- we want to generate the config files because we need it to run now /-->
+                            <id>generate</id>
+                            <goals>
+                                <goal>process</goal>
+                            </goals>
+                            <configuration>
+                                <processor>
+                                    <name>java-processor</name>
+                                </processor>
+                                <dictionary>src/main/confd/dictionaries/local.dict</dictionary>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <arguments>
+                            <argument>--spring.config.location=file:target/generated-configuration/application.yml
+                            </argument>
+                        </arguments>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+    <profile>
+        <id>delivery</id>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.nodevops</groupId>
+                    <artifactId>confd-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <!-- mandatory: use the same id to get the benefit of the merge of the values with the global configuration -->
+                            <id>prepare</id>
+                            <goals>
+                                <goal>prepare</goal>
+                            </goals>
+                            <configuration>
+                                <forceDestToLocalFileSystemType>false</forceDestToLocalFileSystemType>
+                                <templates>
+                                    <template>
+                                        <id>application.yml</id>
+                                        <!-- we only need to override the dest value, as long as we keep the templates in the same order as in the global config -->
+                                        <dest>/usr/local/appli/config/application.yml</dest>
+                                    </template>
+                                </templates>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>confd</id>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <phase>package</phase>
+                            <configuration>
+                                <descriptors>
+                                    <descriptor>src/main/assembly/confd.xml</descriptor>
+                                </descriptors>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </profile>
+</profiles>
 ----

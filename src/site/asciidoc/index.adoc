@@ -31,8 +31,8 @@ the templates and the resource config files, targeted to be used on _production 
 
 The _confd-maven-plugin_ has two goals:
 
-* confd:prepare: generate the TOML files that can be used by the `process` goal or in order to prepare a config templates bundle for later usage
-* confd:process: processe the templates locally
+* confd:prepare: generates the TOML files that can be used by the `process` goal or in order to prepare a config templates bundle for later usage
+* confd:process: process the templates locally
 
 
 === References
