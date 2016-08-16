@@ -27,19 +27,48 @@ public class PrepareMojo extends AbstractMojo {
     private File workingDirectory;
 
     /**
-     * A list of TemplateConfig elements. A TemplateConfig element mimics the content of a confd TOML file (see
-     * https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md#create-a-template-resource-config)
+     * <p>
+     * A list of TemplateConfig elements.
+     * </p>
+     * <p>
+     * A TemplateConfig element mimics the content of a confd TOML file (see
+     * <a href="https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md#create-a-template-resource-config">
+     * https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md#create-a-template-resource-config</a>)
      * so you can specify the src of the template to parse (src), the destination (dest) and a list of keys
-     * (full list of main namespaces) that are needed by the template. See the examples pages for more details.
+     * (full list of main namespaces) that are needed by the template.
+     * </p>
+     * <p>
+     * <pre>
+     * &lt;templates&gt;
+     *   &lt;template&gt;
+     *     &lt;id&gt;application.yml&lt;/id&gt;
+     *     &lt;src&gt;src/main/confd/templates/application.yml.tmpl&lt;/src&gt;
+     *     &lt;dest&gt;${project.basedir}/target/generated-configuration/application.yml&lt;/dest&gt;
+     *     &lt;keys&gt;
+     *       &lt;value&gt;/your/namespace&lt;/value&gt;
+     *       &lt;value&gt;/runtime&lt;/value&gt;
+     *     &lt;/keys&gt;
+     *   &lt;/template&gt;
+     * &lt;/templates&gt;
+     * </pre>
+     * </p>
      */
     @Parameter(required = true)
     private List<TemplateConfig> templates;
 
     /**
+     * <p>
      * by default, the <i>dest</i> param is a String that will be preserved as-is. If you set
      * <i>forceDestToLocalFileSystemType</i> to true, then it will be transformed as a valid path according to the
      * OS where the current build is running (for instance, /a/unix/path will be transformed in \\a\\unix\\path under
      * windows)
+     * </p>
+     * <p>
+     * The typical usage will be to set <i>forceDestToLocalFileSystemType</i> to <i>true</i> if you have a population of developers that
+     * work with more than one operating systems (eg: Windows, Mac and Linux, typically in the context of an OSS project)
+     * and to set it to <i>false</i> when you want to generate a non-local target configuration (the target directory written into the confd
+     * toml file is then independent of the OS of the people collaborating on the project)
+     * </p>
      */
     @Parameter(property = "confd.forceDestToLocalFileSystemType", defaultValue = "false")
     private boolean forceDestToLocalFileSystemType;

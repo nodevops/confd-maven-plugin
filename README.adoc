@@ -1,0 +1,56 @@
+= Confd Maven Plugin
+NoDevops contributors <team@nodevops.io>
+1.0, July 19, 2016, confd-maven-plugin
+:toc:
+:icons: font
+:quick-uri: https://github.com/nodevops/confd-maven-plugin/
+
+== Badges
+
+image:https://travis-ci.org/nodevops/confd-maven-plugin.svg?branch=master["Linux Build Status", link="https://travis-ci.org/nodevops/confd-maven-plugin"]
+image:https://tea-ci.org/api/badges/nodevops/confd-maven-plugin/status.svg["Windows Build Status", link="https://tea-ci.org/nodevops/confd-maven-plugin"]
+image:https://codecov.io/gh/nodevops/confd-maven-plugin/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/nodevops/confd-maven-plugin"]
+image:https://dependencyci.com/github/nodevops/confd-maven-plugin/badge["Dependency Status", link="https://dependencyci.com/github/nodevops/confd-maven-plugin"]
+
+== What?
+
+The https://github.com/kelseyhightower/confd[confd] maven plugin aims at integrating *confd*, a lightweight configuration management tool, with maven.
+
+Because we use extensively confd to deal with our environment dependant application configuration files (in a docker data-container for instance),
+and because we want to use the same tool everywhere, starting with the developer workstation, we needed to be able to use confd templates and configuration files
+inside a maven build.
+
+The _confd-maven-plugin_ hence allows you to use confd templates inside your project (instead of using the classical filtering features provided by default by Maven)
+
+Note: because confd is currently not available for the Windows operating system, we provide a workaround in the form of a (very) basic java implementation of confd (only for the _env_ backend) that
+only supports the `getv` template function like in the `{{getv "/myapp/database/url"}}` example.
+
+The documentation of the plugin is available at http://nodevops.github.io/confd-maven-plugin/
+
+== Building
+
+The *confd-maven-plugin* is built against jdk 7 and maven 3.1.1
+
+== Contribute
+
+Feedbacks and contributions are welcome through link:https://github.com/nodevops/confd-maven-plugin/issues[issues] and link:https://github.com/nodevops/confd-maven-plugin/pulls[pull requests]
+
+Please have a look at our [coding-rules-and-conventions.adoc](https://github.com/nodevops/confd-maven-plugin/tree/master/src/site/asciidoc/coding-rules-and-conventions.adoc)
+
+== Licence
+
+```
+Copyright 2015 NoDevOps
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```

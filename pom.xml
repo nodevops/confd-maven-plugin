@@ -24,18 +24,19 @@
         <mockito.version>2.0.42-beta</mockito.version>
         <!-- maven plugins -->
         <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
-        <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-        <mavenSitePluginVersion>3.4</mavenSitePluginVersion>
-        <mavenProjectInfoReportsPluginVersion>2.8</mavenProjectInfoReportsPluginVersion>
-        <mavenResourcesPluginVersion>2.6</mavenResourcesPluginVersion>
-        <mavenJavadocPluginVersion>2.10.3</mavenJavadocPluginVersion>
-        <mavenChangelogPluginVersion>2.3</mavenChangelogPluginVersion>
-        <mavenPmdPluginVersion>3.6</mavenPmdPluginVersion>
-        <mavenSurefireReportPluginVersion>2.19</mavenSurefireReportPluginVersion>
-        <asciidoctorMavenPluginVersion>1.5.3</asciidoctorMavenPluginVersion>
+        <maven-plugin-plugin.version>3.2</maven-plugin-plugin.version>
+        <maven-project-info-reports-plugin.version>2.9</maven-project-info-reports-plugin.version>
+        <maven-site-plugin.version>3.4</maven-site-plugin.version>
+        <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
+        <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+        <maven-changelog-plugin.version>2.3</maven-changelog-plugin.version>
+        <maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
+        <maven-surefire-report-plugin.version>2.19</maven-surefire-report-plugin.version>
+        <asciidoctor-maven-plugin.version>1.5.3</asciidoctor-maven-plugin.version>
         <maven-plugin-testing-harness.version>3.1.0</maven-plugin-testing-harness.version>
         <github-site-maven-plugin.version>0.12</github-site-maven-plugin.version>
         <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
+        <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
     </properties>
 
     <prerequisites>
@@ -114,7 +115,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>${mavenPluginPluginVersion}</version>
+            <version>${maven-plugin-plugin.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -183,7 +184,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>${mavenPluginPluginVersion}</version>
+                    <version>${maven-plugin-plugin.version}</version>
                     <executions>
                         <execution>
                             <id>mojo-descriptor</id>
@@ -199,14 +200,19 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>${mavenSitePluginVersion}</version>
+                    <version>${maven-site-plugin.version}</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.asciidoctor</groupId>
                             <artifactId>asciidoctor-maven-plugin</artifactId>
-                            <version>${asciidoctorMavenPluginVersion}</version>
+                            <version>${asciidoctor-maven-plugin.version}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+                <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -260,37 +266,37 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>${mavenResourcesPluginVersion}</version>
+                <version>${maven-resources-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${mavenProjectInfoReportsPluginVersion}</version>
+                <version>${maven-project-info-reports-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${mavenJavadocPluginVersion}</version>
+                <version>${maven-javadoc-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>${mavenSurefireReportPluginVersion}</version>
+                <version>${maven-surefire-report-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>${mavenPmdPluginVersion}</version>
+                <version>${maven-pmd-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changelog-plugin</artifactId>
-                <version>${mavenChangelogPluginVersion}</version>
+                <version>${maven-changelog-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>${mavenPluginPluginVersion}</version>
+                <version>${maven-plugin-plugin.version}</version>
             </plugin>
         </plugins>
     </reporting>
@@ -313,6 +319,41 @@
                                     <goal>site</goal>
                                 </goals>
                                 <phase>site</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-no-snapshots</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireReleaseDeps>
+                                            <failWhenParentIsSnapshot>false</failWhenParentIsSnapshot>
+                                            <message>No SNAPSHOT dependencies allowed!</message>
+                                            <excludes>
+                                                <!--
+                                                    We want to exclude child module dependencies from this check, as we're
+                                                    always using SNAPSHOT versions (except when performing a release)
+                                                -->
+                                                <exclude>${project.groupId}:*</exclude>
+                                            </excludes>
+                                        </requireReleaseDeps>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

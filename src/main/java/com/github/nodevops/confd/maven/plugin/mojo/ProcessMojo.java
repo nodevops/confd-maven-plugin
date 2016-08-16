@@ -32,8 +32,36 @@ public class ProcessMojo extends AbstractMojo {
     private File workingDirectory;
 
     /**
-     * The confd processor to use. Can be either "local-confd-processor" to use a local confd binary, or
+     * <p>
+     * The confd processor to use.
+     * </p>
+     * <p>
+     * Can be either "local-confd-processor" to use a local confd binary, or
      * "java-processor" to use a very simple confd compatible parser written in java.
+     * </p>
+     * <p>
+     * Two processors are supported for the moment: the <i>java-processor</i> that takes no extra parameter
+     * <pre>
+     * &lt;processor&gt;
+     *   &lt;name&gt;java-processor&lt;/name&gt;
+     * &lt;/processor&gt;
+     * </pre>
+     * <p>
+     * and the <i>local-confd-processor</i> that takes a single parameter <i>binary.path</i>
+     * used to specify where the <i>confd</i> binary can be found
+     * <p>
+     * <pre>
+     * &lt;processor&gt;
+     *   &lt;name&gt;local-confd-processor&lt;/name&gt;
+     *   &lt;properties&gt;
+     *     &lt;property&gt;
+     *       &lt;name&gt;binary.path&lt;/name&gt;
+     *       &lt;value&gt;/path/to/confd&lt;/value&gt;
+     *     &lt;/property&gt;
+     *   &lt;/properties&gt;
+     * &lt;/processor&gt;
+     * </pre>
+     * </p>
      */
     @Parameter(required = true)
     private ProcessorConfig processor;
