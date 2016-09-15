@@ -1,0 +1,12 @@
+FROM looztra/maven-fury:1.0
+MAINTAINER NoDevOps Team <team@nodevops.io>
+
+ENV CONFD_VERSION=0.11.0
+
+USER root
+
+RUN mkdir -p /opt/local/confd && \
+    curl -sL https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-linux-amd64 > /opt/local/confd/confd && \
+    chmod +x /opt/local/confd/confd
+
+USER maven
