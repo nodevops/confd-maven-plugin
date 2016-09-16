@@ -124,7 +124,8 @@ function do_mvn_release(){
 
 function run_tests(){
   echo "[Not Publishing] Running tests then exiting."
-  mvn clean test $MVN_OPTS
+  #mvn clean test $MVN_OPTS
+  docker run --rm -ti -e JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk -v $(pwd):/test nodevops/maven-fury-confd:1.0 /opt/local/maven-3.1.x/bin/mvn clean test -Dconfd.local.path.for.tests=/opt/local/confd-0.11.0/confd
 }
 
 #----------------------
