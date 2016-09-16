@@ -1,0 +1,6 @@
+branches:
+    except:
+        - gh-pages
+
+build_script:
+    - mvn clean package
