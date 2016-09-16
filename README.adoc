@@ -10,7 +10,7 @@ NoDevops contributors <team@nodevops.io>
 == Badges
 
 image:https://travis-ci.org/nodevops/confd-maven-plugin.svg?branch=master["Linux Build Status", link="https://travis-ci.org/nodevops/confd-maven-plugin"]
-image:https://tea-ci.org/api/badges/nodevops/confd-maven-plugin/status.svg["Windows Build Status", link="https://tea-ci.org/nodevops/confd-maven-plugin"]
+image:https://ci.appveyor.com/api/projects/status/github/nodevops/confd-maven-plugin["Windows Build Status", link="https://ci.appveyor.com/project/looztra/confd-maven-plugin"]
 image:https://codecov.io/gh/nodevops/confd-maven-plugin/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/nodevops/confd-maven-plugin"]
 image:https://dependencyci.com/github/nodevops/confd-maven-plugin/badge["Dependency Status", link="https://dependencyci.com/github/nodevops/confd-maven-plugin"]
 
