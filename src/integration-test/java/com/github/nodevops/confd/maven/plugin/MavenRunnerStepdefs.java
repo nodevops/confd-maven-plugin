@@ -38,7 +38,7 @@ public class MavenRunnerStepdefs {
     private String projectRoot;
     private File projectRootAsFile;
     private List<String> mvnArgs = Lists.newArrayList();
-    private String confdLocation;
+    private String confdForCucumberLocation;
     private List<String> executorOutput = Lists.newArrayList();
     private String fullOutput;
     private String scenarioId;
@@ -69,10 +69,10 @@ public class MavenRunnerStepdefs {
         this.m2Home = m2Home;
     }
 
-    @Given("confd is located in: (.*)")
-    public void setConfdLocation(String confdLocation) {
-        System.out.println("Registering confd location as <" + confdLocation + ">");
-        this.confdLocation = confdLocation;
+    @Given("confd for cucumber is located in: (.*)")
+    public void setConfdForCucumberLocation(String confdForCucumberLocation) {
+        System.out.println("Registering confd location for cucumber as <" + confdForCucumberLocation + ">");
+        this.confdForCucumberLocation = confdForCucumberLocation;
     }
 
     @Given("my test project root is : (.*)")
@@ -91,8 +91,8 @@ public class MavenRunnerStepdefs {
         for (String mvnArg : mvnArgs) {
             cmdLine.addArgument(mvnArg);
         }
-        if (confdLocation != null) {
-            cmdLine.addArgument("-Dconfd.local.path.for.tests=" + confdLocation);
+        if (confdForCucumberLocation != null) {
+            cmdLine.addArgument("-Dcucumber.confd.binary.path=" + confdForCucumberLocation);
         }
         DefaultExecutor executor = new DefaultExecutor();
         if (projectRootAsFile != null) {
@@ -142,6 +142,11 @@ public class MavenRunnerStepdefs {
     @Then("file '(.*)' exists")
     public void fileExists(String path) {
         assertThat(new File(getFilePathInProject(path))).exists().canRead();
+    }
+
+    @Then("file '(.*)' does not exist")
+    public void fileDoesNotExist(String path) {
+        assertThat(new File(getFilePathInProject(path))).doesNotExist();
     }
 
     @Then("files exist:")

@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.nodevops</groupId>
-    <artifactId>springboot-simple-noprofile</artifactId>
+    <artifactId>simple-noprofile-java-procesor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>springboot-sample</name>
-    <description>Demo project for Spring Boot</description>
+    <name>simple-sample</name>
+    <description>Demo project for Confd Maven Plugin</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
