@@ -1,0 +1,18 @@
+server:
+  port: {{getv "/your/namespace/myapp/httpport"}}
+  tomcat:
+    accesslog:
+      directory: {{getv "/your/namespace/myapp/tomcat/access/log/dir"}}
+      enabled: {{getv "/your/namespace/myapp/tomcat/access/log/enabled"}}
+      pattern: {{getv "/your/namespace/myapp/tomcat/access/log/pattern"}}
+      prefix: {{getv "/your/namespace/myapp/tomcat/access/log/prefix"}}
+      suffix: {{getv "/your/namespace/myapp/tomcat/access/log/suffix"}}
+
+management:
+  context-path: {{getv "/your/namespace/myapp/management/context/path"}}
+
+info:
+  env:
+    name: {{getv "/your/namespace/myapp/env/name"}}
+  orchestrator:
+    app_id: {{getv "/runtime/orchestrator/app/id"}}

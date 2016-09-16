@@ -43,6 +43,7 @@ public class MavenRunnerStepdefs {
     private String fullOutput;
     private String scenarioId;
     private int exitCode;
+    private int expectedExitCode = 0;
     private Map<String, String> fileContentCache = Maps.newHashMap();
 
     @Before({"@mavenBuild"})
@@ -83,6 +84,12 @@ public class MavenRunnerStepdefs {
         assertThat(this.projectRootAsFile).exists();
     }
 
+    @Given("we expect a failure with exit code: (\\d+)")
+    public void setExpectedExitCode(int expectedExitCode) {
+        System.out.println("Expecting exit code to be <" + expectedExitCode + ">");
+        this.expectedExitCode = expectedExitCode;
+    }
+
     @When("I run maven with args: (.*)")
     public void runMavenCommand(List<String> mvnArgs) throws IOException {
         this.mvnArgs.addAll(mvnArgs);
@@ -98,6 +105,7 @@ public class MavenRunnerStepdefs {
         if (projectRootAsFile != null) {
             executor.setWorkingDirectory(projectRootAsFile);
         }
+        executor.setExitValue(expectedExitCode);
         executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {
             @Override
             protected void processLine(String line, int level) {
@@ -116,7 +124,7 @@ public class MavenRunnerStepdefs {
 
     @Then("the build is not OK")
     public void buildIsNotOk() {
-        assertThat(exitCode).isNotEqualTo(0);
+        assertThat(exitCode).isNotEqualTo(0).isEqualTo(expectedExitCode);
     }
 
     @Then("output contains: (.*)")

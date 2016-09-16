@@ -3,8 +3,8 @@ Feature: When all is clear, all is good
 
 
     Scenario Outline: simple-noprofile-java-processor
-        This project does not have any profile, hence the prepare and the generate goal are always launched.
-        Yes, this is not realistic because in real life you'd like to generate more than only a local configuration :)
+    This project does not have any profile, hence the prepare and the generate goal are always launched.
+    Yes, this is not realistic because in real life you'd like to generate more than only a local configuration :)
 
         Given my test project root is : src/integration-test/data/projects/simple-noprofile-java-processor
         And JAVA_HOME is set to: <java_home>
@@ -81,8 +81,8 @@ Feature: When all is clear, all is good
 
 
     Scenario Outline: simple-with-profile-java-processor default profile
-        This project has the prepare step shared by 2 profiles: local is the default profile, delivery is the second.
-        This scenario uses the default profile, so we expect basically the same behaviour as with the simple-noprofile-java-processor scenario
+    This project has the prepare step shared by 2 profiles: local is the default profile, delivery is the second.
+    This scenario uses the default profile, so we expect basically the same behaviour as with the simple-noprofile-java-processor scenario
 
         Given my test project root is : src/integration-test/data/projects/simple-with-profile-java-processor
         And JAVA_HOME is set to: <java_home>
@@ -159,10 +159,10 @@ Feature: When all is clear, all is good
 
 
     Scenario Outline: simple-with-profile-java-processor delivery profile
-        This project has the prepare step shared by 2 profiles: local is the default profile, delivery is the second.
-        This scenario uses the delivery profile, so we expect that only the confd config file will be generated.
-        In this use case, we also expect the target file (in the confd toml file) to be the path specified in the delivery profile and not
-        the destination specified by the shared configuration.
+    This project has the prepare step shared by 2 profiles: local is the default profile, delivery is the second.
+    This scenario uses the delivery profile, so we expect that only the confd config file will be generated.
+    In this use case, we also expect the target file (in the confd toml file) to be the path specified in the delivery profile and not
+    the destination specified by the shared configuration.
 
         Given my test project root is : src/integration-test/data/projects/simple-with-profile-java-processor
         And JAVA_HOME is set to: <java_home>
@@ -172,8 +172,8 @@ Feature: When all is clear, all is good
         And 1 template was found
         And output contains: keys=[/your/namespace, /runtime]
         And files exist:
-            | target/confd/conf.d/application.yml.toml       |
-            | target/confd/templates/application.yml.tmpl    |
+            | target/confd/conf.d/application.yml.toml    |
+            | target/confd/templates/application.yml.tmpl |
         And file 'target/generated-configuration/application.yml' does not exist
         And file 'target/confd/conf.d/application.yml.toml' content is:
             """
@@ -220,6 +220,7 @@ Feature: When all is clear, all is good
     Scenario Outline: simple-with-profile-confd-processor default profile
     This project has the prepare step shared by 2 profiles: local is the default profile, delivery is the second.
     This scenario uses the default profile, so we expect basically the same behaviour as with the simple-noprofile-java-processor scenario
+    This time, we use a real confd binary instead of using our simple java implementation
 
         Given my test project root is : src/integration-test/data/projects/simple-with-profile-confd-processor
         And JAVA_HOME is set to: <java_home>

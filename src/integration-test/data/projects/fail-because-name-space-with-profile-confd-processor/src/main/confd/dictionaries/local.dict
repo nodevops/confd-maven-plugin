@@ -1,0 +1,11 @@
+# in local mode, let's mock the orchestrator_app_id
+/runtime/orchestrator/app/id=bazinga
+#
+/your/namespace/myapp/httpport=8080
+/your/namespace/myapp/tomcat/access/log/dir=target
+/your/namespace/myapp/tomcat/access/log/enabled=false
+/your/namespace/myapp/tomcat/access/log/pattern=combined
+/your/namespace/myapp/tomcat/access/log/prefix=access_log
+/your/namespace/myapp/tomcat/access/log/suffix=.log
+/your/namespace/myapp/management/context/path=/admin
+/your/namespace/myapp/env/name=local

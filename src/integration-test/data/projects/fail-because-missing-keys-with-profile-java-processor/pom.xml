@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.nodevops</groupId>
+    <artifactId>fail-because-missing-keys-with-profile-java-processor</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>fail-because-missing-keys-with-profile-java-processor</name>
+    <description>Demo project for Confd Maven Plugin</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
+        <confd-maven-plugin.version>0.1.0-SNAPSHOT</confd-maven-plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.nodevops</groupId>
+                <artifactId>confd-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- common step shared by all profiles that prepare the config file for further usage /-->
+                        <id>prepare</id>
+                        <goals>
+                            <goal>prepare</goal>
+                        </goals>
+                        <configuration>
+                            <forceDestToLocalFileSystemType>true</forceDestToLocalFileSystemType>
+                            <templates>
+                                <template>
+                                    <id>application.yml</id>
+                                    <src>src/main/confd/templates/application.yml.tmpl</src>
+                                    <dest>${project.basedir}/target/generated-configuration/application.yml</dest>
+                                    <keys>
+                                        <value>/your/namespace</value>
+                                        <value>/runtime</value>
+                                    </keys>
+                                </template>
+                            </templates>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.github.nodevops</groupId>
+                    <artifactId>confd-maven-plugin</artifactId>
+                    <version>${confd-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.nodevops</groupId>
+                        <artifactId>confd-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- we want to generate the config files because we need it to run now /-->
+                                <id>generate</id>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                                <configuration>
+                                    <processor>
+                                        <name>java-processor</name>
+                                    </processor>
+                                    <dictionary>src/main/confd/dictionaries/local.dict</dictionary>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>delivery</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.nodevops</groupId>
+                        <artifactId>confd-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- common step shared by all profiles that prepare the config file for further usage /-->
+                                <id>prepare</id>
+                                <goals>
+                                    <goal>prepare</goal>
+                                </goals>
+                                <configuration>
+                                    <forceDestToLocalFileSystemType>true</forceDestToLocalFileSystemType>
+                                    <templates>
+                                        <template>
+                                            <id>application.yml</id>
+                                            <dest>/usr/local/appli/config/application.yml</dest>
+                                        </template>
+                                    </templates>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
