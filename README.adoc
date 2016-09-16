@@ -1,14 +1,16 @@
 = Confd Maven Plugin
 NoDevops contributors <team@nodevops.io>
 1.0, July 19, 2016, confd-maven-plugin
-:toc:
-:icons: font
+:page-layout: base
+:idprefix:
+:idseparator: -
+:toc: preamble
 :quick-uri: https://github.com/nodevops/confd-maven-plugin/
 
 == Badges
 
 image:https://travis-ci.org/nodevops/confd-maven-plugin.svg?branch=master["Linux Build Status", link="https://travis-ci.org/nodevops/confd-maven-plugin"]
-image:https://tea-ci.org/api/badges/nodevops/confd-maven-plugin/status.svg["Windows Build Status", link="https://tea-ci.org/nodevops/confd-maven-plugin"]
+image:https://ci.appveyor.com/api/projects/status/github/nodevops/confd-maven-plugin["Windows Build Status", link="https://ci.appveyor.com/project/looztra/confd-maven-plugin"]
 image:https://codecov.io/gh/nodevops/confd-maven-plugin/branch/master/graph/badge.svg["Code Coverage", link="https://codecov.io/gh/nodevops/confd-maven-plugin"]
 image:https://dependencyci.com/github/nodevops/confd-maven-plugin/badge["Dependency Status", link="https://dependencyci.com/github/nodevops/confd-maven-plugin"]
 
@@ -30,6 +32,25 @@ The documentation of the plugin is available at http://nodevops.github.io/confd-
 == Building
 
 The *confd-maven-plugin* is built against jdk 7 and maven 3.1.1
+
+=== Unit tests
+
+* under linux: you need `confd` installed somewhere
+** the default expected location is `/usr/local/bin/confd`
+** you can override the location using the switch `-Dconfd.local.path.for.tests=/opt/local/confd-0.11.0/confd`
+* under windows: the tests requiring a confd binary are skipped
+
+=== Integration testing
+
+you need `docker` to run the integration tests:
+
+* `cd` in the project root directory
+* we currently expect that your user id is `1000`
+* `mvn install` at least one time so that the plugin artifacts are stored in your maven cache
+* launch:
+** bash `docker run -ti --rm -v $(pwd):/test -v $HOME/.m2:/test/.m2 -e JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk nodevops/maven-fury-confd:1.0 /opt/local/maven-3.1.x/bin/mvn clean verify -P integration-test`
+** fish `docker run -ti --rm -v (pwd):/test -v $HOME/.m2:/test/.m2 -e JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk nodevops/maven-fury-confd:1.0 /opt/local/maven-3.1.x/bin/mvn clean verify -P integration-test`
+* be patient because a lot of maven builds are involved in these integration tests
 
 == Contribute
 

@@ -3,7 +3,7 @@
 # adapted from https://raw.githubusercontent.com/openzipkin/zipkin/master/travis/publish.sh
 #
 set -ex
-readonly MVN_OPTS=-Dconfd.local.path.for.tests=$HOME/.local/bin/confd
+readonly MVN_OPTS=-Dconfd.local.path.for.tests=/usr/local/bin/confd
 
 
 function heartbeat() {
@@ -124,7 +124,11 @@ function do_mvn_release(){
 
 function run_tests(){
   echo "[Not Publishing] Running tests then exiting."
-  mvn clean test $MVN_OPTS
+  #mvn clean test $MVN_OPTS
+  echo "Running Unit tests"
+  docker run --rm -ti -e JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk -v $(pwd):/test -v $HOME/.m2:/test/.m2 nodevops/maven-fury-confd:1.0 /opt/local/maven-3.1.x/bin/mvn clean install -Dconfd.local.path.for.tests=/opt/local/confd-0.11.0/confd
+  echo "Running integration tests"
+  docker run --rm -ti -e JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk -v $(pwd):/test -v $HOME/.m2:/test/.m2 nodevops/maven-fury-confd:1.0 /opt/local/maven-3.1.x/bin/mvn verify -P integration-test
 }
 
 #----------------------

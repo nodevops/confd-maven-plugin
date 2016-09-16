@@ -120,3 +120,8 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+
+#
+# Integration tests run from a container may produce a maven cache directory somewhere
+#
+.m2/
