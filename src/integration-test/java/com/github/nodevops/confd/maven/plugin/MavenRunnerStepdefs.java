@@ -11,12 +11,11 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.LogOutputStream;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.io.FileUtils;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.io.Files;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
@@ -33,6 +32,7 @@ public class MavenRunnerStepdefs {
     public static final String JAVA_HOME_ENV_KEY = "JAVA_HOME";
     private static final String FILE_SEPARATOR = System.getProperty("file.separator");
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+    public static final String CHARSET_UTF_8 = "UTF-8";
     private Map<String, String> environment = Maps.newHashMap();
     private String m2Home;
     private String projectRoot;
@@ -165,8 +165,7 @@ public class MavenRunnerStepdefs {
                 Joiner
                     .on(LINE_SEPARATOR)
                     .join(
-                        Files.asCharSource(new File(getFilePathInProject(file)), Charsets.UTF_8)
-                            .readLines()));
+                        FileUtils.readLines(new File(getFilePathInProject(file)), CHARSET_UTF_8)));
         }
         return fileContentCache.get(file);
     }
