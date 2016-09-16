@@ -92,6 +92,7 @@ function publish_docs() {
   echo "[Publishing Docs] Done"
 }
 function publish_snapshot(){
+  run_tests
   echo "[Publishing Snapshot] Publishing..."
   docker run --rm -ti -e CI_GITHUB_USERNAME -e CI_GITHUB_PASSWORD -e CI_JFROG_USERNAME -e CI_JFROG_PASSWORD -e JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk -v $(pwd):/test -v $HOME/.m2:/test/.m2 nodevops/maven-fury-confd:1.0 /opt/local/maven-3.1.x/bin/mvn clean deploy --settings maven-settings.xml -Dconfd.local.path.for.tests=/opt/local/confd-0.11.0/confd
   echo "[Publishing Snapshot] Done"
