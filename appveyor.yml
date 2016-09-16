@@ -3,4 +3,4 @@ branches:
         - gh-pages
 
 build_script:
-    - mvn clean package
+    - cmd: mvn clean package
