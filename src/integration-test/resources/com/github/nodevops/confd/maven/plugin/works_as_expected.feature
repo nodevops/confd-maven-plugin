@@ -1,6 +1,9 @@
 @mavenBuild
 Feature: Mvn Build Works as expectd
 
+    Background:
+        Given confd is located in: /opt/local/confd-0.11.0
+
     Scenario Outline: simple-noprofile
         Given my test project root is : src/integration-test/data/projects/simple-noprofile
         And JAVA_HOME is set to: <java_home>

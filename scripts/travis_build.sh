@@ -125,8 +125,10 @@ function do_mvn_release(){
 function run_tests(){
   echo "[Not Publishing] Running tests then exiting."
   #mvn clean test $MVN_OPTS
-  ls -lart
+  echo "Running Unit tests"
   docker run --rm -ti -e JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk -v $(pwd):/test -v $HOME/.m2:/test/.m2 nodevops/maven-fury-confd:1.0 /opt/local/maven-3.1.x/bin/mvn clean test -Dconfd.local.path.for.tests=/opt/local/confd-0.11.0/confd
+  echo "Running integration tests"
+  docker run --rm -ti -e JAVA_HOME=/usr/lib/jvm/java-1.7-openjdk -v $(pwd):/test -v $HOME/.m2:/test/.m2 nodevops/maven-fury-confd:1.0 /opt/local/maven-3.1.x/bin/mvn verify -P integration-test
 }
 
 #----------------------
