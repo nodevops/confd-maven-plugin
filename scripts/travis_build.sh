@@ -3,7 +3,7 @@
 # adapted from https://raw.githubusercontent.com/openzipkin/zipkin/master/travis/publish.sh
 #
 set -ex
-readonly MVN_OPTS=-Dconfd.local.path.for.tests=$HOME/.local/bin/confd
+readonly MVN_OPTS=-Dconfd.local.path.for.tests=/usr/local/bin/confd
 
 
 function heartbeat() {
