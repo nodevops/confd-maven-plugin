@@ -38,6 +38,7 @@ public class MavenRunnerStepdefs {
     private String projectRoot;
     private File projectRootAsFile;
     private List<String> mvnArgs = Lists.newArrayList();
+    private String confdLocation;
     private List<String> executorOutput = Lists.newArrayList();
     private String fullOutput;
     private String scenarioId;
@@ -68,6 +69,12 @@ public class MavenRunnerStepdefs {
         this.m2Home = m2Home;
     }
 
+    @Given("confd is located in: (.*)")
+    public void setConfdLocation(String confdLocation) {
+        System.out.println("Registering confd location as <" + confdLocation + ">");
+        this.confdLocation = confdLocation;
+    }
+
     @Given("my test project root is : (.*)")
     public void setProjectRoot(String projectRoot) {
         System.out.println("Setting projectRoot to <" + projectRoot + ">");
@@ -83,6 +90,9 @@ public class MavenRunnerStepdefs {
         CommandLine cmdLine = new CommandLine(getCommandLine());
         for (String mvnArg : mvnArgs) {
             cmdLine.addArgument(mvnArg);
+        }
+        if (confdLocation != null) {
+            cmdLine.addArgument("-Dconfd.local.path.for.tests=" + confdLocation);
         }
         DefaultExecutor executor = new DefaultExecutor();
         if (projectRootAsFile != null) {
