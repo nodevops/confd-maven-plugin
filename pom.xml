@@ -188,7 +188,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
             <version>${commons-exec.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
