@@ -7,6 +7,7 @@ ENV CONFD_0110_VERSION=0.11.0 \
 USER root
 
 RUN set -x m && \
+    apk add --no-cache git && \
     mkdir -p /opt/local/confd-${CONFD_0110_VERSION} && \
     mkdir -p /opt/local/confd-${CONFD_0120a_VERSION} && \
     curl -sL https://github.com/kelseyhightower/confd/releases/download/v${CONFD_0110_VERSION}/confd-${CONFD_0110_VERSION}-linux-amd64 > /opt/local/confd-${CONFD_0110_VERSION}/confd && \
