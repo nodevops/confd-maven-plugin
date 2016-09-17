@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Parser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.templating</a> &gt; <span class="el_source">Parser.java</span></div><h1>Parser.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.templating;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Map;
+
+public class Parser {
+    private static final char NEW_LINE = '\n';
+
+    private File templateFile;
+    private String encoding;
+    private int lineNumber;
+
+<span class="fc" id="L17">    public Parser(File templateFile, String encoding) {</span>
+<span class="fc" id="L18">        this.templateFile = templateFile;</span>
+<span class="fc" id="L19">        this.encoding = encoding;</span>
+<span class="fc" id="L20">    }</span>
+
+    public String parse(Map&lt;String, String&gt; env) throws IOException {
+<span class="fc" id="L23">        BufferedReader br = null;</span>
+        try {
+<span class="fc" id="L25">            br = new BufferedReader(new InputStreamReader(new FileInputStream(templateFile), encoding));</span>
+<span class="fc" id="L26">            StringBuilder sb = new StringBuilder();</span>
+            String line;
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            while ((line = br.readLine()) != null) {</span>
+<span class="fc" id="L29">                lineNumber++;</span>
+<span class="fc" id="L30">                sb.append(evaluateSource(line, env)).append(NEW_LINE);</span>
+            }
+<span class="fc" id="L32">            return sb.toString();</span>
+        } finally {
+<span class="pc bpc" id="L34" title="3 of 4 branches missed.">            if (br != null) {</span>
+<span class="pc" id="L35">                br.close();</span>
+            }
+        }
+    }
+
+    private String evaluateSource(String source, Map&lt;String, String&gt; env) throws IOException {
+<span class="fc" id="L41">        LexicalAnalyzer sc = new LexicalAnalyzer(source);</span>
+<span class="fc" id="L42">        StringBuilder sb = new StringBuilder();</span>
+
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        for (Token l = sc.nextToken(); l.getType() != Type.EOF; l = sc.nextToken()) {</span>
+<span class="pc bfc" id="L45" title="All 2 branches covered.">            switch (l.getType()) {</span>
+                case ENTERING_TEMPLATE_EXPRESSION:
+<span class="fc" id="L47">                    evaluateTemplateExpression(sb, sc, env);</span>
+<span class="fc" id="L48">                    break;</span>
+                default:
+<span class="fc" id="L50">                    sb.append(l.getValue());</span>
+            }
+        }
+
+<span class="fc" id="L54">        return sb.toString();</span>
+    }
+
+    private void evaluateTemplateExpression(StringBuilder sb, LexicalAnalyzer sc, Map&lt;String, String&gt; env) throws IOException {
+<span class="fc" id="L58">        expectIdentifer(&quot;getv&quot;, sc);</span>
+<span class="fc" id="L59">        Token t = expectString(sc);</span>
+<span class="fc" id="L60">        String keyName = t.getValue();</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (!env.containsKey(keyName)) {</span>
+<span class="nc" id="L62">            throw new IOException(getErrorMessage(&quot;key &quot; + keyName + &quot; does not exist&quot;, t));</span>
+        } else {
+<span class="fc" id="L64">            sb.append((String) env.get(keyName));</span>
+<span class="fc" id="L65">            expectClosingBraces(sc);</span>
+        }
+<span class="fc" id="L67">    }</span>
+
+    private void expectClosingBraces(LexicalAnalyzer sc) throws IOException {
+<span class="fc" id="L70">        Token t = sc.nextToken();</span>
+
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        while (t.getType() != Type.LEAVING_TEMPLATE_EXPRESSION) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            switch (t.getType()) {</span>
+                case EOF:
+<span class="nc" id="L75">                    throw new IOException(getErrorMessage(&quot;unexpected unclosed action in command&quot;, t));</span>
+                default:
+<span class="nc" id="L77">                    throw new IOException(getErrorMessage(&quot;expected }}  but found &quot; + t.getValue(), t));</span>
+            }
+        }
+
+<span class="fc" id="L81">    }</span>
+
+    private Token expectString(LexicalAnalyzer sc) throws IOException {
+<span class="fc" id="L84">        Token t = sc.nextToken();</span>
+
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        while (t.getType() != Type.STRING) {</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">            switch (t.getType()) {</span>
+                case LEAVING_TEMPLATE_EXPRESSION:
+                case EOF:
+<span class="nc" id="L90">                    throw new IOException(getErrorMessage(&quot;wrong number of args for getv: want 1 got 0&quot;, t));</span>
+                default:
+<span class="nc" id="L92">                    throw new IOException(getErrorMessage(&quot;expected string but found &quot; + t.getValue(), t));</span>
+            }
+        }
+
+<span class="fc" id="L96">        return t;</span>
+    }
+
+    private void expectIdentifer(String id, LexicalAnalyzer sc) throws IOException {
+<span class="fc" id="L100">        Token t = sc.nextToken();</span>
+
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        while (t.getType() != Type.IDENTIFIER) {</span>
+<span class="nc bnc" id="L103" title="All 3 branches missed.">            switch (t.getType()) {</span>
+                case EOF:
+<span class="nc" id="L105">                    throw new IOException(getErrorMessage(&quot;unexpected unclosed action in command&quot;, t));</span>
+                case LEAVING_TEMPLATE_EXPRESSION:
+<span class="nc" id="L107">                    throw new IOException(getErrorMessage(&quot;missing value for command&quot;, t));</span>
+                default:
+<span class="nc" id="L109">                    throw new IOException(getErrorMessage(&quot;expected \'getv\' but found &quot; + t.getValue(), t));</span>
+            }
+        }
+
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">        if (!t.getValue().equals(id)) {</span>
+<span class="nc" id="L114">            throw new IOException(getErrorMessage(&quot;function &quot; + t.getValue() + &quot; not defined&quot;, t));</span>
+        }
+<span class="fc" id="L116">    }</span>
+
+    private String getErrorMessage(String message, Token t) {
+<span class="nc" id="L119">        StringBuilder sb = new StringBuilder(&quot;File : &quot;);</span>
+<span class="nc" id="L120">        sb.append(templateFile)</span>
+<span class="nc" id="L121">                .append(&quot; [&quot;).append(lineNumber).append(',').append(t.getPosition()).append(&quot;] : &quot;)</span>
+<span class="nc" id="L122">                .append(message);</span>
+
+<span class="nc" id="L124">        return sb.toString();</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

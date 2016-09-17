@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DictionaryUtil.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.utils</a> &gt; <span class="el_source">DictionaryUtil.java</span></div><h1>DictionaryUtil.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.utils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
+
+/**
+ * Contains some helper methods to handle dictionaries. A dictionary is a file containing key/value pairs. The file may contain comments
+ * which begin with a '#'. The key/value separator is the '=' character. The key format is : - a sequence of parts - a part begin with a &quot;/&quot;
+ * character followed by one or more uppercase letter and/or lowercase letter and/or digit and or underscore character &quot;_&quot;
+ * &lt;p&gt;
+ * Example of valid key/value pairs :
+ * &lt;p&gt;
+ *
+ * &lt;pre&gt;
+ *
+ * /web/media_server/address = media.server.com
+ * /web/home_page = http://www.home.com/
+ * /proxy/http = server.proxy.int
+ * /proxy/https = server.proxy.int
+ * /users/user01 = user1
+ * /user/use02 = user2
+ *
+ * &lt;/pre&gt;
+ */
+<span class="nc" id="L32">public class DictionaryUtil {</span>
+    /**
+     * Load the &lt;code&gt;dictionary&lt;/code&gt; file into a &lt;code&gt;Map&lt;/code&gt; according to the &lt;code&gt;encoding&lt;/code&gt;.
+     * &lt;p&gt;
+     * The key names are converted to shell environment variable format. For instance /part1/part2 is converted to PART1_PART2 (the first
+     * '/' is removed).
+     *
+     * @param dictionary
+     *            the file path to load
+     * @param encoding
+     *            the encoding of the file to load
+     * @return a &lt;code&gt;Map&lt;/code&gt; representation of the file
+     * @throws DictionaryException
+     *             if the file cannot be load or if a key/value is not valid.
+     */
+    public static Map&lt;String, String&gt; readDictionaryAsEnvVariables(File dictionary, String encoding) throws DictionaryException {
+<span class="fc" id="L48">        return readDictionnary(dictionary, encoding, true);</span>
+    }
+
+    /**
+     * Load the &lt;code&gt;dictionary&lt;/code&gt; file into a &lt;code&gt;Map&lt;/code&gt; according to the &lt;code&gt;encoding&lt;/code&gt;.
+     * &lt;p&gt;
+     * The key names format is unchanged
+     *
+     * @param dictionary
+     *            the file path to load
+     * @param encoding
+     *            the encoding of the file to load
+     * @return a &lt;code&gt;Map&lt;/code&gt; representation of the file
+     * @throws DictionaryException
+     *             if the file cannot be load or if a key/value is not valid.
+     */
+    public static Map&lt;String, String&gt; readDictionaryAsProperties(File dictionary, String encoding) throws DictionaryException {
+<span class="fc" id="L65">        return readDictionnary(dictionary, encoding, false);</span>
+    }
+
+    private static Map&lt;String, String&gt; readDictionnary(File dictionary, String encoding, boolean convertToEnv) throws DictionaryException {
+        try {
+<span class="fc" id="L70">            List&lt;String&gt; lines = FileUtils.loadFile(dictionary);</span>
+            // the file must contain at least one key/value pair
+<span class="fc bfc" id="L72" title="All 2 branches covered.">            if (lines.isEmpty()) {</span>
+<span class="fc" id="L73">                throw new DictionaryException(&quot;dictionary &quot; + dictionary + &quot; does not contain key/value pair&quot;);</span>
+            }
+<span class="fc" id="L75">            Map&lt;String, String&gt; env = new HashMap&lt;String, String&gt;();</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            for (String line : lines) {</span>
+<span class="fc" id="L77">                String[] split = line.split(&quot;\\s*=\\s*&quot;, 2);</span>
+
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                if (split.length != 2) {</span>
+<span class="nc" id="L80">                    throw new DictionaryException(&quot;dictionary &quot; + dictionary + &quot; : bad key/value format for &quot; + line);</span>
+                }
+<span class="fc bfc" id="L82" title="All 2 branches covered.">                if (StringUtils.isEmpty(split[1])) {</span>
+<span class="fc" id="L83">                    throw new DictionaryException(&quot;dictionary &quot; + dictionary + &quot; : bad key/value format for &quot; + line);</span>
+                }
+<span class="fc" id="L85">                env.put(normalizeKey(split[0], convertToEnv), split[1]);</span>
+
+<span class="fc" id="L87">            }</span>
+<span class="fc" id="L88">            return env;</span>
+<span class="nc" id="L89">        } catch (IOException e) {</span>
+<span class="nc" id="L90">            throw new DictionaryException(&quot;unable to load &quot; + dictionary, e);</span>
+<span class="fc" id="L91">        } catch (InvalidKeyFormatException e) {</span>
+<span class="fc" id="L92">            throw new DictionaryException(&quot;unable to load &quot; + dictionary, e);</span>
+        }
+    }
+
+    /**
+     * Convert a key from confd format &quot;/part1/part2/....&quot; to shell variable format &quot;PART1_PART2_....&quot; if the &lt;code&gt;convertToEnv&lt;/code&gt; is
+     * &lt;code&gt;true&lt;/code&gt;, otherwise the key remains unchanged The valid format for the input key is : &lt;code&gt;(/\w+)+&lt;/code&gt;
+     *
+     * @param key
+     *            the key to convert
+     * @param convertToEnv
+     *            true must convert the key name to to shell variable format
+     * @return a new key in shell variable format
+     * @throws DictionaryException
+     *             - If the key format is not valid
+     */
+    private static String normalizeKey(String key, boolean convertToEnv) throws InvalidKeyFormatException {
+        String result;
+        // check the key format
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        if (!Pattern.matches(&quot;(/\\w+)+&quot;, key)) {</span>
+<span class="fc" id="L112">            throw new InvalidKeyFormatException(&quot;the key &quot; + key + &quot; format is not valid. Valid format is (/[a-zA-Z0-9]+)+&quot;);</span>
+        }
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        if (convertToEnv) {</span>
+            // convert confd key format /part1/part2/.../... to shell variable PART1_PART2_..._...
+<span class="fc" id="L116">            result = StringUtils.stripStart(key, &quot;/&quot;).toUpperCase().replace('/', '_');</span>
+        } else {
+<span class="fc" id="L118">            result = key;</span>
+        }
+<span class="fc" id="L120">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

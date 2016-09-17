@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProcessorFactory.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.processors</a> &gt; <span class="el_source">ProcessorFactory.java</span></div><h1>ProcessorFactory.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.processors;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Properties;
+import java.util.StringTokenizer;
+
+import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
+
+import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
+import com.github.nodevops.confd.maven.plugin.processors.impl.JavaProcessorImpl;
+import com.github.nodevops.confd.maven.plugin.processors.impl.LocalConfdProcessorImpl;
+import com.github.nodevops.confd.maven.plugin.processors.impl.RemoteConfdProcessorImpl;
+
+<span class="nc" id="L17">public class ProcessorFactory {</span>
+
+    public static final String LOCAL_CONFD_PROCESSOR = &quot;local-confd-processor&quot;;
+    public static final String WS_CONFD_PROCESSOR = &quot;ws-confd-processor&quot;;
+    public static final String JAVA_PROCESSOR = &quot;java-processor&quot;;
+
+    public static Processor createProcessor(ProcessorConfig config) throws ProcessorCreationException {
+<span class="fc" id="L24">        String processorName = config.getName();</span>
+
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if (LOCAL_CONFD_PROCESSOR.equals(processorName)) {</span>
+<span class="fc" id="L27">            return createLocalConfdProcessor(config.getProperties());</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        } else if (WS_CONFD_PROCESSOR.equals(processorName)) {</span>
+<span class="nc" id="L29">            return createWsConfdProcessor(config.getProperties());</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        } else if (JAVA_PROCESSOR.equals(processorName)) {</span>
+<span class="nc" id="L31">            return createJavaProcessor();</span>
+        } else {
+<span class="nc" id="L33">            throw new ProcessorCreationException(&quot;Unknow processor name : &quot; + processorName +</span>
+                    &quot; (available processors : local-confd-processor,remote-confd-processor,java-processor)&quot;);
+        }
+    }
+
+    private static Processor createLocalConfdProcessor(Properties properties) throws ProcessorCreationException {
+<span class="fc" id="L39">        String binaryPathProperty = properties.getProperty(&quot;binary.path&quot;);</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if (StringUtils.isEmpty(binaryPathProperty)) {</span>
+<span class="nc" id="L41">            throw new ProcessorCreationException(&quot;processor &quot; + LOCAL_CONFD_PROCESSOR +</span>
+                    &quot;the binary.path property is missing.&quot;);
+        }
+        // check if confd is present
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if (!FileUtils.fileExists(binaryPathProperty)) {</span>
+<span class="nc" id="L46">            throw new ProcessorCreationException(&quot;processor &quot; + LOCAL_CONFD_PROCESSOR + &quot; confd binary &quot; +</span>
+                    binaryPathProperty + &quot; does not exists&quot;);
+        }
+<span class="fc" id="L49">        return new LocalConfdProcessorImpl(binaryPathProperty);</span>
+    }
+
+    private static Processor createWsConfdProcessor(Properties properties) throws ProcessorCreationException {
+<span class="nc" id="L53">        String url = properties.getProperty(&quot;url&quot;);</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (StringUtils.isEmpty(url)) {</span>
+<span class="nc" id="L55">            throw new ProcessorCreationException(&quot;Unable to create remote-confd-processor : missing property 'url'&quot;);</span>
+        }
+        try {
+<span class="nc" id="L58">            URL httpURL = new URL(url);</span>
+<span class="nc" id="L59">            return new RemoteConfdProcessorImpl(httpURL);</span>
+<span class="nc" id="L60">        } catch (MalformedURLException e) {</span>
+<span class="nc" id="L61">            throw new ProcessorCreationException(&quot;Unable to create remote-confd-processor : bad property 'url' = &quot; + url);</span>
+        }
+    }
+
+    private static Processor createJavaProcessor() {
+<span class="nc" id="L66">        return new JavaProcessorImpl();</span>
+    }
+
+    private static String getConfdPathFromPATH() {
+        // get the PATH
+<span class="nc" id="L71">        String path = System.getenv(&quot;PATH&quot;);</span>
+        // get the path separator
+        String pathSeparator;
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (System.getProperty(&quot;os.name&quot;).toLowerCase().startsWith(&quot;windows&quot;)) {</span>
+<span class="nc" id="L75">            pathSeparator = &quot;;&quot;;</span>
+        } else {
+<span class="nc" id="L77">            pathSeparator = &quot;:&quot;;</span>
+        }
+
+        // browse the PATH
+<span class="nc" id="L81">        StringTokenizer st = new StringTokenizer(path, pathSeparator);</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        while (st.hasMoreTokens()) {</span>
+<span class="nc" id="L83">            String dir = st.nextToken();</span>
+<span class="nc" id="L84">            File confdPath = new File(dir, &quot;confd&quot;);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            if (confdPath.canExecute()) {</span>
+<span class="nc" id="L86">                return confdPath.getAbsolutePath();</span>
+            }
+<span class="nc" id="L88">        }</span>
+        // no confd found in the PATH
+<span class="nc" id="L90">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

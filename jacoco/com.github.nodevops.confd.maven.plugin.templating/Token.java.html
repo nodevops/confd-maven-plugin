@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Token.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.templating</a> &gt; <span class="el_source">Token.java</span></div><h1>Token.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.templating;
+
+public class Token {
+    private Type type;
+    private String value;
+    private int position;
+
+<span class="fc" id="L8">    public Token(Type type, int position) {</span>
+<span class="fc" id="L9">        this.type = type;</span>
+<span class="fc" id="L10">        this.value = &quot;&quot;;</span>
+<span class="fc" id="L11">        this.position = position;</span>
+<span class="fc" id="L12">    }</span>
+
+<span class="fc" id="L14">    public Token(Type type, String value, int position) {</span>
+<span class="fc" id="L15">        this.type = type;</span>
+<span class="fc" id="L16">        this.value = value;</span>
+<span class="fc" id="L17">        this.position = position;</span>
+<span class="fc" id="L18">    }</span>
+
+    public Type getType() {
+<span class="fc" id="L21">        return this.type;</span>
+    }
+
+    public String getValue() {
+<span class="fc" id="L25">        return this.value;</span>
+    }
+
+    public int getPosition() {
+<span class="nc" id="L29">        return this.position;</span>
+    }
+
+    public String toString() {
+<span class="nc" id="L33">        return &quot;Token{type=&quot; + this.type + &quot;, value=\'&quot; + this.value + '\'' + '}';</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

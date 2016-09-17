@@ -1,0 +1,25 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.utils,FileUtils,5,10,1,1,3,2,2,1,1,1
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.utils,DictionaryException,0,9,0,0,0,4,0,2,0,2
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.utils,InvalidKeyFormatException,5,4,0,0,2,2,1,1,1,1
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.utils,DictionaryUtil,33,135,1,11,4,22,2,9,1,4
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.utils,WorkingDirectoryUtil,5,145,1,5,2,37,2,4,1,2
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin,ConfdConsts,3,0,0,0,1,0,1,0,1,0
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors.impl,JavaProcessorImpl,71,146,3,11,9,31,3,7,0,3
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors.impl,LocalConfdProcessorImpl.new LogOutputStream() {...},0,12,0,0,0,3,0,2,0,2
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors.impl,LocalConfdProcessorImpl,28,128,1,5,6,30,1,5,0,3
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors.impl,RemoteConfdProcessorImpl,7,0,0,0,4,0,2,0,2,0
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.model,ProcessorConfig,92,34,22,0,0,3,14,6,3,6
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.model,TemplateConfig,152,64,33,1,2,7,21,10,4,10
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.templating,LexicalAnalyzer,97,262,17,31,23,73,15,19,1,9
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.templating,Token,22,30,0,0,2,12,2,4,2,4
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.templating,Type,5,93,0,0,0,11,1,3,1,3
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.templating,Parser.new Object() {...},3,23,0,0,0,1,0,1,0,1
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.templating,Parser,167,155,15,12,17,38,12,10,1,7
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.mojo,PrepareMojo,111,118,6,10,12,22,6,5,0,3
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.mojo,ProcessMojo,50,94,2,2,7,17,2,2,0,2
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors,ProcessorFactory,130,26,15,3,28,7,13,2,4,2
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors,ProcessorContext,0,31,0,0,0,5,0,6,0,6
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors,ProcessorCreationException,9,0,0,0,4,0,2,0,2,0
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors,ProcessorContext.ProcessorContextBuilder,27,35,0,0,0,1,1,6,1,6
+confd Maven Plugin,com.github.nodevops.confd.maven.plugin.processors,ProcessorExecutionException,9,0,0,0,4,0,2,0,2,0

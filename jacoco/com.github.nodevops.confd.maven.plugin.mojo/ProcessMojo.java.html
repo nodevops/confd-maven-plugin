@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProcessMojo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.mojo</a> &gt; <span class="el_source">ProcessMojo.java</span></div><h1>ProcessMojo.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.mojo;
+
+import java.io.File;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import com.github.nodevops.confd.maven.plugin.model.ProcessorConfig;
+import com.github.nodevops.confd.maven.plugin.processors.Processor;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorCreationException;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorExecutionException;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorFactory;
+import com.github.nodevops.confd.maven.plugin.utils.FileUtils;
+
+@Mojo(name = &quot;process&quot;, defaultPhase = LifecyclePhase.PROCESS_RESOURCES, threadSafe = true)
+<span class="fc" id="L21">public class ProcessMojo extends AbstractMojo {</span>
+
+    /**
+     * The character encoding scheme to be applied when filtering resources.
+     */
+    @Parameter(property = &quot;encoding&quot;, defaultValue = &quot;${project.build.sourceEncoding}&quot;)
+    protected String encoding;
+    /**
+     * The output directory into which the resources will be copied.
+     */
+    @Parameter(defaultValue = &quot;${project.basedir}/target/confd&quot;, required = true)
+    private File workingDirectory;
+
+    /**
+     * &lt;p&gt;
+     * The confd processor to use.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Can be either &quot;local-confd-processor&quot; to use a local confd binary, or
+     * &quot;java-processor&quot; to use a very simple confd compatible parser written in java.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Two processors are supported for the moment: the &lt;i&gt;java-processor&lt;/i&gt; that takes no extra parameter
+     * &lt;pre&gt;
+     * &amp;lt;processor&amp;gt;
+     *   &amp;lt;name&amp;gt;java-processor&amp;lt;/name&amp;gt;
+     * &amp;lt;/processor&amp;gt;
+     * &lt;/pre&gt;
+     * &lt;p&gt;
+     * and the &lt;i&gt;local-confd-processor&lt;/i&gt; that takes a single parameter &lt;i&gt;binary.path&lt;/i&gt;
+     * used to specify where the &lt;i&gt;confd&lt;/i&gt; binary can be found
+     * &lt;p&gt;
+     * &lt;pre&gt;
+     * &amp;lt;processor&amp;gt;
+     *   &amp;lt;name&amp;gt;local-confd-processor&amp;lt;/name&amp;gt;
+     *   &amp;lt;properties&amp;gt;
+     *     &amp;lt;property&amp;gt;
+     *       &amp;lt;name&amp;gt;binary.path&amp;lt;/name&amp;gt;
+     *       &amp;lt;value&amp;gt;/path/to/confd&amp;lt;/value&amp;gt;
+     *     &amp;lt;/property&amp;gt;
+     *   &amp;lt;/properties&amp;gt;
+     * &amp;lt;/processor&amp;gt;
+     * &lt;/pre&gt;
+     * &lt;/p&gt;
+     */
+    @Parameter(required = true)
+    private ProcessorConfig processor;
+
+    /**
+     * The path to the file containing a list of key/value that are referenced in the templates
+     */
+    @Parameter(required = true)
+    private File dictionary;
+
+    @Parameter(defaultValue = &quot;${project.basedir}&quot;, readonly = true)
+    private File basedir;
+
+    /**
+     * If true (default), the plugin will create directories if needed in order to be able to create the target files
+     */
+    @Parameter(defaultValue = &quot;true&quot;, property = &quot;confd.mkdirs&quot;)
+    private boolean mkdirs;
+
+    /**
+     * Set skipProcess to true on the command line if you want to disable the process goal
+     */
+    @Parameter(property = &quot;confd.skipProcess&quot;, defaultValue = &quot;false&quot;)
+    private boolean skipProcess;
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (skipProcess) {</span>
+<span class="nc" id="L94">            getLog().info(&quot;confd:process has been skipped per configuration of the 'confd.skipProcess' parameter.&quot;);</span>
+<span class="nc" id="L95">            return;</span>
+        }
+<span class="fc" id="L97">        getLog().info(&quot;plugin configuration {&quot; +</span>
+            &quot; workingDirectory: &quot; + workingDirectory +
+            &quot;, encoding:&quot; + encoding +
+            &quot;, mkdirs:&quot; + mkdirs +
+            &quot;, skipProcess:&quot; + skipProcess +
+            &quot;, dictionary:&quot; + dictionary +
+<span class="fc" id="L103">            &quot;, processor:&quot; + processor.toString() +</span>
+            &quot;}&quot;);
+<span class="fc" id="L105">        dictionary = FileUtils.makeAbsoluteIfNeeded(dictionary, basedir);</span>
+
+        // the dictionary file must exists
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (!dictionary.exists()) {</span>
+<span class="nc" id="L109">            throw new MojoExecutionException(&quot;dictionary &quot; + dictionary + &quot; does not exits&quot;);</span>
+        }
+
+        // This is the real execution block
+        try {
+            // get the processor according to the &lt;processor&gt;&lt;/processor&gt; tag defined in the pom.xml
+<span class="fc" id="L115">            Processor processor = ProcessorFactory.createProcessor(this.processor);</span>
+<span class="fc" id="L116">            ProcessorContext context = ProcessorContext.builder()</span>
+<span class="fc" id="L117">                .dictionaryPath(dictionary)</span>
+<span class="fc" id="L118">                .workingDirectory(workingDirectory)</span>
+<span class="fc" id="L119">                .encoding(encoding)</span>
+<span class="fc" id="L120">                .mkdirs(mkdirs)</span>
+<span class="fc" id="L121">                .build();</span>
+
+<span class="fc" id="L123">            getLog().info(&quot;Executing processor &quot; + this.processor.getName());</span>
+<span class="fc" id="L124">            processor.process(context);</span>
+<span class="nc" id="L125">        } catch (ProcessorCreationException e) {</span>
+<span class="nc" id="L126">            throw new MojoExecutionException(&quot;Unable to create processor &quot; + processor, e);</span>
+<span class="nc" id="L127">        } catch (ProcessorExecutionException e) {</span>
+<span class="nc" id="L128">            throw new MojoExecutionException(&quot;Unable to execute processor &quot; + processor, e);</span>
+<span class="fc" id="L129">        }</span>
+
+<span class="fc" id="L131">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

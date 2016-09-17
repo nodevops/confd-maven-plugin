@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TemplateConfig.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.model</a> &gt; <span class="el_source">TemplateConfig.java</span></div><h1>TemplateConfig.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.model;
+
+import java.io.File;
+import java.util.UUID;
+
+import lombok.Data;
+
+<span class="pc bnc" id="L8" title="All 32 branches missed.">@Data</span>
+public class TemplateConfig {
+<span class="fc" id="L10">    private String id = UUID.randomUUID().toString();</span>
+<span class="fc" id="L11">    private File src;</span>
+<span class="fc" id="L12">    private String dest;</span>
+<span class="fc" id="L13">    private String[] keys;</span>
+
+    public String getResolvedDestPath(boolean forceDestToLocalFileSystemType) {
+<span class="pc bpc" id="L16" title="1 of 2 branches missed.">        if (forceDestToLocalFileSystemType) {</span>
+<span class="nc" id="L17">            File destAsFile = new File(dest);</span>
+<span class="nc" id="L18">            return destAsFile.getPath();</span>
+        } else {
+<span class="fc" id="L20">            return dest;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,3 +1,4 @@
+com.github.nodevops.confd.maven.plugin
 com.github.nodevops.confd.maven.plugin.model
 com.github.nodevops.confd.maven.plugin.mojo
 com.github.nodevops.confd.maven.plugin.processors

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LocalConfdProcessorImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.processors.impl</a> &gt; <span class="el_source">LocalConfdProcessorImpl.java</span></div><h1>LocalConfdProcessorImpl.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.processors.impl;
+
+import static com.github.nodevops.confd.maven.plugin.ConfdConsts.CONF_D_DIRECTORY;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.LogOutputStream;
+import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.codehaus.plexus.util.FileUtils;
+
+import com.github.nodevops.confd.maven.plugin.processors.Processor;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorContext;
+import com.github.nodevops.confd.maven.plugin.processors.ProcessorExecutionException;
+import com.github.nodevops.confd.maven.plugin.utils.DictionaryException;
+import com.github.nodevops.confd.maven.plugin.utils.DictionaryUtil;
+import com.moandjiezana.toml.Toml;
+
+public class LocalConfdProcessorImpl implements Processor {
+
+    private String confdBinaryPath;
+
+<span class="fc" id="L28">    private Log log = new SystemStreamLog();</span>
+
+<span class="fc" id="L30">    public LocalConfdProcessorImpl(String confdBinaryPath) {</span>
+<span class="fc" id="L31">        this.confdBinaryPath = confdBinaryPath;</span>
+<span class="fc" id="L32">    }</span>
+
+    @Override
+    public void process(ProcessorContext context) throws ProcessorExecutionException {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (context.isMkdirs()) {</span>
+<span class="fc" id="L37">            File tomlDirectory = new File(context.getWorkingDirectory(), CONF_D_DIRECTORY);</span>
+            try {
+<span class="fc" id="L39">                List&lt;File&gt; tomlFiles = FileUtils.getFiles(tomlDirectory, &quot;*.toml&quot;, null);</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">                for (File tomlFile : tomlFiles) {</span>
+                    // process each toml file
+<span class="fc" id="L42">                    createTargetDirIfNeeded(tomlFile, context.isMkdirs());</span>
+<span class="fc" id="L43">                }</span>
+<span class="nc" id="L44">            } catch (IOException ioe) {</span>
+<span class="nc" id="L45">                throw new ProcessorExecutionException(&quot;unable to process toml files in &quot; + tomlDirectory, ioe);</span>
+<span class="fc" id="L46">            }</span>
+        }
+        try {
+<span class="fc" id="L49">            CommandLine confdCmdLine = new CommandLine(confdBinaryPath);</span>
+<span class="fc" id="L50">            confdCmdLine.addArgument(&quot;-onetime&quot;);</span>
+<span class="fc" id="L51">            confdCmdLine.addArgument(&quot;-backend&quot;);</span>
+<span class="fc" id="L52">            confdCmdLine.addArgument(&quot;env&quot;);</span>
+<span class="fc" id="L53">            confdCmdLine.addArgument(&quot;-confdir&quot;);</span>
+<span class="fc" id="L54">            confdCmdLine.addArgument(context.getWorkingDirectory().getAbsolutePath());</span>
+
+<span class="fc" id="L56">            DefaultExecutor executor = new DefaultExecutor();</span>
+<span class="fc" id="L57">            executor.setStreamHandler(new PumpStreamHandler(new LogOutputStream() {</span>
+                @Override
+                protected void processLine(String line, int level) {
+<span class="fc" id="L60">                    log.info(line);</span>
+<span class="fc" id="L61">                }</span>
+            }));
+<span class="fc" id="L63">            log.info(&quot;Start process &quot; + confdCmdLine);</span>
+<span class="fc" id="L64">            int exitCode = executor.execute(</span>
+                confdCmdLine,
+<span class="fc" id="L66">                DictionaryUtil.readDictionaryAsEnvVariables(context.getDictionaryPath(), context.getEncoding()));</span>
+
+<span class="nc" id="L68">        } catch (IOException e) {</span>
+<span class="nc" id="L69">            throw new ProcessorExecutionException(&quot;Unable to start confd&quot;, e);</span>
+<span class="nc" id="L70">        } catch (DictionaryException e) {</span>
+<span class="nc" id="L71">            throw new ProcessorExecutionException(&quot;Unable to start confd&quot;, e);</span>
+<span class="fc" id="L72">        }</span>
+<span class="fc" id="L73">    }</span>
+
+    public void createTargetDirIfNeeded(File tomlFile, boolean mkdirs) {
+<span class="fc" id="L76">        Toml toml = new Toml().read(tomlFile);</span>
+<span class="fc" id="L77">        String dest = toml.getString(&quot;template.dest&quot;);</span>
+<span class="fc" id="L78">        File destFile = new File(dest);</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (mkdirs) {</span>
+<span class="fc" id="L80">            destFile.getParentFile().mkdirs();</span>
+        }
+<span class="fc" id="L82">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

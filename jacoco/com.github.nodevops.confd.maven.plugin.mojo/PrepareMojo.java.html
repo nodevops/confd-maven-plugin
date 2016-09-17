@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PrepareMojo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.mojo</a> &gt; <span class="el_source">PrepareMojo.java</span></div><h1>PrepareMojo.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.mojo;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
+import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
+
+@Mojo(name = &quot;prepare&quot;, defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = false)
+<span class="fc" id="L19">public class PrepareMojo extends AbstractMojo {</span>
+
+    public static final String INDEX_AND_ID_SEPARATOR = &quot;:&quot;;
+    public static final String ELEMENTS_SEPARATOR = &quot;,&quot;;
+    /**
+     * The output directory into which to copy the resources.
+     */
+    @Parameter(defaultValue = &quot;${project.basedir}/target/confd&quot;, required = true)
+    private File workingDirectory;
+
+    /**
+     * &lt;p&gt;
+     * A list of TemplateConfig elements.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * A TemplateConfig element mimics the content of a confd TOML file (see
+     * &lt;a href=&quot;https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md#create-a-template-resource-config&quot;&gt;
+     * https://github.com/kelseyhightower/confd/blob/master/docs/quick-start-guide.md#create-a-template-resource-config&lt;/a&gt;)
+     * so you can specify the src of the template to parse (src), the destination (dest) and a list of keys
+     * (full list of main namespaces) that are needed by the template.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * &lt;pre&gt;
+     * &amp;lt;templates&amp;gt;
+     *   &amp;lt;template&amp;gt;
+     *     &amp;lt;id&amp;gt;application.yml&amp;lt;/id&amp;gt;
+     *     &amp;lt;src&amp;gt;src/main/confd/templates/application.yml.tmpl&amp;lt;/src&amp;gt;
+     *     &amp;lt;dest&amp;gt;${project.basedir}/target/generated-configuration/application.yml&amp;lt;/dest&amp;gt;
+     *     &amp;lt;keys&amp;gt;
+     *       &amp;lt;value&amp;gt;/your/namespace&amp;lt;/value&amp;gt;
+     *       &amp;lt;value&amp;gt;/runtime&amp;lt;/value&amp;gt;
+     *     &amp;lt;/keys&amp;gt;
+     *   &amp;lt;/template&amp;gt;
+     * &amp;lt;/templates&amp;gt;
+     * &lt;/pre&gt;
+     * &lt;/p&gt;
+     */
+    @Parameter(required = true)
+    private List&lt;TemplateConfig&gt; templates;
+
+    /**
+     * &lt;p&gt;
+     * by default, the &lt;i&gt;dest&lt;/i&gt; param is a String that will be preserved as-is. If you set
+     * &lt;i&gt;forceDestToLocalFileSystemType&lt;/i&gt; to true, then it will be transformed as a valid path according to the
+     * OS where the current build is running (for instance, /a/unix/path will be transformed in \\a\\unix\\path under
+     * windows)
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * The typical usage will be to set &lt;i&gt;forceDestToLocalFileSystemType&lt;/i&gt; to &lt;i&gt;true&lt;/i&gt; if you have a population of developers that
+     * work with more than one operating systems (eg: Windows, Mac and Linux, typically in the context of an OSS project)
+     * and to set it to &lt;i&gt;false&lt;/i&gt; when you want to generate a non-local target configuration (the target directory written into the confd
+     * toml file is then independent of the OS of the people collaborating on the project)
+     * &lt;/p&gt;
+     */
+    @Parameter(property = &quot;confd.forceDestToLocalFileSystemType&quot;, defaultValue = &quot;false&quot;)
+    private boolean forceDestToLocalFileSystemType;
+
+    @Parameter(defaultValue = &quot;${project.basedir}&quot;, readonly = true)
+    private File basedir;
+
+    /**
+     * Set skipPrepare to true on the command line if you want to disable the prepare goal
+     */
+    @Parameter(property = &quot;confd.skipPrepare&quot;, defaultValue = &quot;false&quot;)
+    private boolean skipPrepare;
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if (skipPrepare) {</span>
+<span class="nc" id="L89">            getLog().info(&quot;confd:prepare has been skipped per configuration of the confd.skipPrepare parameter.&quot;);</span>
+<span class="nc" id="L90">            return;</span>
+        }
+<span class="fc" id="L92">        getLog().info(&quot;plugin configuration {&quot; +</span>
+            &quot; forceDestToLocalFileSystemType:&quot; + forceDestToLocalFileSystemType +
+            &quot;, workingDirectory: &quot; + workingDirectory +
+            &quot;, skipPrepare:&quot; + skipPrepare +
+            &quot;}&quot;);
+<span class="fc" id="L97">        checkRequirements();</span>
+<span class="fc" id="L98">        getLog().info(&quot;found &lt;&quot; + templates.size() + &quot;&gt; template(s):&quot;);</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        for (TemplateConfig templateConfig : templates) {</span>
+<span class="fc" id="L100">            getLog().info(templateConfig.toString());</span>
+<span class="fc" id="L101">        }</span>
+
+        // This is the real execution block
+        try {
+            // generate the &quot;confd like&quot; working directory which will contain the toml and template files
+<span class="fc" id="L106">            WorkingDirectoryUtil.generateConfdArtefacts(workingDirectory, templates, forceDestToLocalFileSystemType);</span>
+<span class="nc" id="L107">        } catch (IOException e) {</span>
+<span class="nc" id="L108">            throw new MojoExecutionException(&quot;Caught an IOException while trying to generate confd artefacts in &quot; +</span>
+                workingDirectory + &quot; for templates &quot; + templates, e);
+<span class="fc" id="L110">        }</span>
+<span class="fc" id="L111">    }</span>
+
+    void checkRequirements() throws MojoExecutionException {
+        // configure templates full path if necessary
+<span class="fc" id="L115">        int index = 0;</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        for (TemplateConfig t : templates) {</span>
+
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">            if (t.getSrc() == null) {</span>
+<span class="nc" id="L119">                throw new MojoExecutionException(&quot;template src&quot; +</span>
+<span class="nc" id="L120">                    &quot; cannot be null for Template element with index &lt;&quot; + index + &quot;&gt; and id &lt;&quot; + t.getId() + &quot;&gt;&quot;);</span>
+            }
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">            if (!t.getSrc().isAbsolute()) {</span>
+<span class="fc" id="L123">                t.setSrc(new File(basedir, t.getSrc().getPath()));</span>
+            }
+            // the source template file must exist !!
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">            if (!t.getSrc().exists()) {</span>
+<span class="nc" id="L127">                throw new MojoExecutionException(&quot;template src &lt;&quot; + t.getSrc() +</span>
+<span class="nc" id="L128">                    &quot;&gt; does not exits for Template element with index &lt;&quot; + index + &quot;&gt; and id &lt;&quot; + t.getId() + &quot;&gt;&quot;);</span>
+            }
+
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if (t.getDest() == null) {</span>
+<span class="nc" id="L132">                throw new MojoExecutionException(&quot;template dest &quot; +</span>
+<span class="nc" id="L133">                    &quot; cannot be null for Template element with index &lt;&quot; + index + &quot;&gt; and id &lt;&quot; + t.getId() + &quot;&gt;&quot;);</span>
+            }
+            // The destination path can contain ${...} expressions. In this case the expressions will be handled by maven
+            // and replaced by the corresponding values
+            // for example : ${project.basedir}/target/confd/file.properties will be converted by maven to &lt;Absolute path of the maven
+            // project&gt;/target/confd/file.properties
+            // If the expression is not handled by maven it will remain in the path. For example
+            // ${unknown.property}/target/confd/file.properties will remain ${unknown.property}/target/confd/file.properties
+            // As the plugin create the output directories it will create ${unknown.property}/target/confd directory. This is a bad
+            // behavior.
+            // So if the final path contains a ${...} expression the plugin must throw an exception
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">            if (Pattern.matches(&quot;.*\\$\\{.*\\}.*&quot;, t.getDest())) {</span>
+<span class="nc" id="L145">                throw new MojoExecutionException(&quot;template dest &quot; + t.getDest() +</span>
+<span class="nc" id="L146">                    &quot; is not a valid path for Template element with index &lt;&quot; + index + &quot;&gt; and id &lt;&quot; + t.getId() + &quot;&gt;&quot;);</span>
+            }
+<span class="fc" id="L148">            index++;</span>
+<span class="fc" id="L149">        }</span>
+<span class="fc" id="L150">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

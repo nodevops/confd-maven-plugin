@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LexicalAnalyzer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">confd Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">com.github.nodevops.confd.maven.plugin.templating</a> &gt; <span class="el_source">LexicalAnalyzer.java</span></div><h1>LexicalAnalyzer.java</h1><pre class="source lang-java linenums">package com.github.nodevops.confd.maven.plugin.templating;
+
+import java.io.IOException;
+import java.nio.CharBuffer;
+
+public class LexicalAnalyzer {
+    private CharBuffer buffer;
+    private boolean isInTemplateExpression;
+
+<span class="fc" id="L10">    public LexicalAnalyzer(String source) {</span>
+<span class="fc" id="L11">        buffer = CharBuffer.wrap(source);</span>
+<span class="fc" id="L12">    }</span>
+
+    public Token nextToken() throws IOException {
+<span class="fc bfc" id="L15" title="All 2 branches covered.">        if (!buffer.hasRemaining()) {</span>
+<span class="fc" id="L16">            return new Token(Type.EOF, &quot;&quot;, buffer.position());</span>
+        }
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        if (!isInTemplateExpression) {</span>
+<span class="fc" id="L19">            return nextTokenNotInTemplateExpression();</span>
+        } else {
+<span class="fc" id="L21">            return nextTokenInTemplateExpression();</span>
+        }
+    }
+
+    private Token nextTokenNotInTemplateExpression() {
+<span class="fc" id="L26">        StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L27">        int position = buffer.position();</span>
+<span class="fc" id="L28">        char c = buffer.get();</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        if (c == '{') {</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">            if (buffer.hasRemaining()) {</span>
+<span class="fc" id="L31">                char c2 = buffer.get();</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                if (c2 == '{') {</span>
+<span class="fc" id="L33">                    isInTemplateExpression = true;</span>
+<span class="fc" id="L34">                    return new Token(Type.ENTERING_TEMPLATE_EXPRESSION, position);</span>
+                } else {
+<span class="nc" id="L36">                    sb.append(c).append(c2);</span>
+<span class="nc" id="L37">                    return nextLiteralToken(sb);</span>
+                }
+            } else {
+<span class="nc" id="L40">                return new Token(Type.LITERAL, sb.toString(), position);</span>
+            }
+        } else {
+<span class="fc" id="L43">            sb.append(c);</span>
+<span class="fc" id="L44">            return nextLiteralToken(sb);</span>
+        }
+    }
+
+    private Token nextTokenInTemplateExpression() throws IOException {
+<span class="fc" id="L49">        int position = buffer.position();</span>
+
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        while (buffer.hasRemaining()) {</span>
+
+<span class="fc" id="L53">            char c = buffer.get();</span>
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            if (Character.isWhitespace(c)) {</span>
+<span class="fc" id="L56">                skipWhiteSpaces();</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">            } else if (Character.isLetter(c)) {</span>
+<span class="fc" id="L58">                backup();</span>
+<span class="fc" id="L59">                return nextIdentifierToken();</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            } else if (c == '&quot;') {</span>
+<span class="fc" id="L61">                return nextStringToken();</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">            } else if (c == '}') {</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">                if (buffer.hasRemaining()) {</span>
+<span class="fc" id="L64">                    c = buffer.get();</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">                    if (c == '}') {</span>
+<span class="fc" id="L66">                        isInTemplateExpression = false;</span>
+<span class="fc" id="L67">                        return new Token(Type.LEAVING_TEMPLATE_EXPRESSION, position);</span>
+                    } else {
+<span class="nc" id="L69">                        backup();</span>
+<span class="nc" id="L70">                        return new Token(Type.OPERAND, &quot;}&quot;, position);</span>
+                    }
+                } else {
+<span class="nc" id="L73">                    return new Token(Type.OPERAND, &quot;}&quot;, position);</span>
+                }
+<span class="nc bnc" id="L75" title="All 2 branches missed.">            } else if (Character.isDigit(c)) {</span>
+<span class="nc" id="L76">                backup();</span>
+<span class="nc" id="L77">                return nextNumberToken();</span>
+            } else {
+<span class="nc" id="L79">                return new Token(Type.OPERAND, String.valueOf(c), position);</span>
+            }
+<span class="fc" id="L81">            position = buffer.position();</span>
+<span class="fc" id="L82">        }</span>
+<span class="nc" id="L83">        return new Token(Type.EOF, position);</span>
+    }
+
+    private Token nextNumberToken() {
+<span class="nc" id="L87">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L88">        int position = buffer.position();</span>
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        while (buffer.hasRemaining()) {</span>
+<span class="nc" id="L91">            char c = buffer.get();</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if (!Character.isDigit(c)) {</span>
+<span class="nc" id="L93">                backup();</span>
+<span class="nc" id="L94">                break;</span>
+            }
+
+<span class="nc" id="L97">            sb.append(c);</span>
+<span class="nc" id="L98">        }</span>
+
+<span class="nc" id="L100">        return new Token(Type.NUMBER, sb.toString(), position);</span>
+    }
+
+    private Token nextStringToken() throws IOException {
+<span class="fc" id="L104">        StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L105">        int position = buffer.position();</span>
+
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        while (buffer.hasRemaining()) {</span>
+<span class="fc" id="L108">            char c = buffer.get();</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (c == '&quot;') {</span>
+<span class="fc" id="L110">                return new Token(Type.STRING, sb.toString(), position);</span>
+            }
+
+<span class="fc" id="L113">            sb.append(c);</span>
+<span class="fc" id="L114">        }</span>
+
+<span class="nc" id="L116">        throw new IOException(&quot;unterminated quoted string&quot;);</span>
+    }
+
+    private Token nextIdentifierToken() {
+<span class="fc" id="L120">        StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L121">        int position = buffer.position();</span>
+
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        while (buffer.hasRemaining()) {</span>
+<span class="fc" id="L124">            char c = buffer.get();</span>
+<span class="pc bpc" id="L125" title="1 of 4 branches missed.">            if (!Character.isLetterOrDigit(c) &amp;&amp; c != 95) {</span>
+<span class="fc" id="L126">                backup();</span>
+<span class="fc" id="L127">                break;</span>
+            }
+
+<span class="fc" id="L130">            sb.append(c);</span>
+<span class="fc" id="L131">        }</span>
+
+<span class="fc" id="L133">        return new Token(Type.IDENTIFIER, sb.toString(), position);</span>
+    }
+
+    private void skipWhiteSpaces() {
+<span class="fc" id="L137">        int position = buffer.position();</span>
+
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        while (buffer.hasRemaining()) {</span>
+<span class="fc" id="L140">            char c = buffer.get();</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">            if (!Character.isWhitespace(c)) {</span>
+<span class="fc" id="L142">                backup();</span>
+<span class="fc" id="L143">                break;</span>
+            }
+<span class="nc" id="L145">        }</span>
+<span class="fc" id="L146">    }</span>
+
+    private void backup() {
+<span class="fc" id="L149">        buffer.position(buffer.position() - 1);</span>
+<span class="fc" id="L150">    }</span>
+
+    private Token nextLiteralToken(StringBuilder sb) {
+<span class="fc" id="L153">        int position = buffer.position();</span>
+
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        while (buffer.hasRemaining()) {</span>
+<span class="fc" id="L156">            char c = buffer.get();</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">            if (c == '{') {</span>
+<span class="fc" id="L158">                backup();</span>
+<span class="fc" id="L159">                break;</span>
+            }
+
+<span class="fc" id="L162">            sb.append(c);</span>
+<span class="fc" id="L163">        }</span>
+
+<span class="fc" id="L165">        return new Token(Type.LITERAL, sb.toString(), position);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
