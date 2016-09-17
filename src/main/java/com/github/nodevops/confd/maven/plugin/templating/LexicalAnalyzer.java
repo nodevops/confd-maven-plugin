@@ -109,11 +109,9 @@ public class LexicalAnalyzer {
             if (c == '"') {
                 return new Token(Type.STRING, sb.toString(), position);
             }
-
             sb.append(c);
         }
-
-        throw new IOException("unterminated quoted string");
+        return new Token(Type.ERROR, "unterminated quoted string", position);
     }
 
     private Token nextIdentifierToken() {
@@ -134,7 +132,7 @@ public class LexicalAnalyzer {
     }
 
     private void skipWhiteSpaces() {
-        int position = buffer.position();
+        buffer.position();
 
         while (buffer.hasRemaining()) {
             char c = buffer.get();

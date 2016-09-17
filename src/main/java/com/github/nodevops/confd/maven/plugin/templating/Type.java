@@ -8,8 +8,9 @@ public enum Type {
     LEAVING_TEMPLATE_EXPRESSION,
     OPERAND,
     NUMBER,
+    ERROR,
     EOF;
 
-    private Type() {
+    Type() {
     }
 }

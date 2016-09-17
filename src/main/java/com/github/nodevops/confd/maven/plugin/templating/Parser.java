@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class Parser {
     private static final char NEW_LINE = '\n';
+    public static final String COMMAND_GETV = "getv";
 
     private File templateFile;
     private String encoding;
@@ -55,24 +56,26 @@ public class Parser {
     }
 
     private void evaluateTemplateExpression(StringBuilder sb, LexicalAnalyzer sc, Map<String, String> env) throws IOException {
-        expectIdentifer("getv", sc);
+        expectIdentifier(COMMAND_GETV, sc);
         Token t = expectString(sc);
         String keyName = t.getValue();
         if (!env.containsKey(keyName)) {
             throw new IOException(getErrorMessage("key " + keyName + " does not exist", t));
         } else {
-            sb.append((String) env.get(keyName));
+            sb.append(env.get(keyName));
             expectClosingBraces(sc);
         }
     }
 
     private void expectClosingBraces(LexicalAnalyzer sc) throws IOException {
+
         Token t = sc.nextToken();
 
-        while (t.getType() != Type.LEAVING_TEMPLATE_EXPRESSION) {
+        if (t.getType() != Type.LEAVING_TEMPLATE_EXPRESSION) {
             switch (t.getType()) {
                 case EOF:
-                    throw new IOException(getErrorMessage("unexpected unclosed action in command", t));
+                    throw new IOException(getErrorMessage(
+                        "unexpected unclosed action in command (missing closing bracket '}'?)", t));
                 default:
                     throw new IOException(getErrorMessage("expected }}  but found " + t.getValue(), t));
             }
@@ -81,13 +84,19 @@ public class Parser {
     }
 
     private Token expectString(LexicalAnalyzer sc) throws IOException {
+
         Token t = sc.nextToken();
 
-        while (t.getType() != Type.STRING) {
+
+        if (t.getType() != Type.STRING) {
             switch (t.getType()) {
                 case LEAVING_TEMPLATE_EXPRESSION:
                 case EOF:
-                    throw new IOException(getErrorMessage("wrong number of args for getv: want 1 got 0", t));
+                    throw new IOException(
+                        getErrorMessage("wrong number of args for '" + COMMAND_GETV + "': want 1 got 0", t));
+                case ERROR:
+                    throw new IOException(
+                        getErrorMessage(t.getValue(), t));
                 default:
                     throw new IOException(getErrorMessage("expected string but found " + t.getValue(), t));
             }
@@ -96,32 +105,53 @@ public class Parser {
         return t;
     }
 
-    private void expectIdentifer(String id, LexicalAnalyzer sc) throws IOException {
+    private void expectIdentifier(String id, LexicalAnalyzer sc) throws IOException {
         Token t = sc.nextToken();
 
-        while (t.getType() != Type.IDENTIFIER) {
+        if (t.getType() != Type.IDENTIFIER) {
             switch (t.getType()) {
                 case EOF:
                     throw new IOException(getErrorMessage("unexpected unclosed action in command", t));
                 case LEAVING_TEMPLATE_EXPRESSION:
                     throw new IOException(getErrorMessage("missing value for command", t));
                 default:
-                    throw new IOException(getErrorMessage("expected \'getv\' but found " + t.getValue(), t));
+                    if (t.getValue().startsWith("/")) {
+                        throw new IOException(
+                            getErrorMessage(
+                                "expected '" +
+                                    COMMAND_GETV +
+                                    "' but found something that looks like a key <" +
+                                    t.getValue() +
+                                    "> (missing 'getv' or another supported function?)",
+                                t));
+                    } else {
+                        throw new IOException(
+                            getErrorMessage(
+                                "expected '" +
+                                    COMMAND_GETV +
+                                    "' but found <" +
+                                    t.getValue() +
+                                    "> (missing 'getv' or another supported function?)",
+                                t));
+                    }
             }
         }
 
         if (!t.getValue().equals(id)) {
-            throw new IOException(getErrorMessage("function " + t.getValue() + " not defined", t));
+            throw new IOException(getErrorMessage("function '" + t.getValue() + "' not supported", t));
         }
     }
 
     private String getErrorMessage(String message, Token t) {
-        StringBuilder sb = new StringBuilder("File : ");
-        sb.append(templateFile)
-                .append(" [").append(lineNumber).append(',').append(t.getPosition()).append("] : ")
-                .append(message);
 
-        return sb.toString();
+        return "File : " +
+            templateFile +
+            " [" +
+            lineNumber +
+            ',' +
+            (t != null ? t.getPosition() : "N/A") +
+            "] : " +
+            message;
 
     }
 }
