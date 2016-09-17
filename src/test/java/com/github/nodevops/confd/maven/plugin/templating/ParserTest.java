@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import com.github.nodevops.confd.maven.plugin.AbstractTest;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 public class ParserTest extends AbstractTest {
     @Test
@@ -277,5 +278,25 @@ public class ParserTest extends AbstractTest {
         exception.expect(IOException.class);
         exception.expectMessage("test.dict [6,14] : unexpected unclosed action in command");
         parser.parse(env);
+    }
+
+    @Test
+    public void shouldGatherKeys() throws IOException {
+        String[] templateLines = {
+            "server:",
+            "  port: {{getv \"/your/namespace/myapp/httpport\"}}",
+            "tomcat:",
+            "  accesslog:",
+            "  directory: {{getv \"/your/namespace/myapp/tomcat/access/log/dir\"}}",
+            "  enabled: {{getv \"/your/namespace/myapp/tomcat/access/log/enabled\"}}",
+        };
+        Map<String, String> env = Maps.newHashMap();
+        File templateFile = createTestFile(templateLines);
+        Parser parser = new Parser(templateFile, "UTF-8", Parser.ParserType.GATHER);
+        parser.parse(env);
+        assertThat(parser.getGatheredKeys()).containsOnly(
+            "/your/namespace/myapp/httpport",
+            "/your/namespace/myapp/tomcat/access/log/dir",
+            "/your/namespace/myapp/tomcat/access/log/enabled");
     }
 }

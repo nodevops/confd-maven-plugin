@@ -8,18 +8,26 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
+import com.github.nodevops.confd.maven.plugin.templating.Parser;
+import com.google.common.collect.Maps;
 
 public class WorkingDirectoryUtil {
     private static final char QUOTE = '\'';
     private static final char LINE_SEPARATOR = '\n';
+    public static final String TOML_FILE_EXT = "toml";
 
     public static void generateConfdArtefacts(
-        File workingDirectory,
+        PrepareContext context,
         List<TemplateConfig> templates,
-        boolean forceDestToLocalFileSystemType) throws IOException {
+        boolean forceDestToLocalFileSystemType,
+        Log log
+    ) throws IOException {
+
+        File workingDirectory = context.getWorkingDirectory();
 
         File templatesDirectory = new File(workingDirectory, TEMPLATES_DIRECTORY);
         File tomlDirectory = new File(workingDirectory, CONF_D_DIRECTORY);
@@ -31,10 +39,39 @@ public class WorkingDirectoryUtil {
         FileUtils.mkdir(templatesDirectory.getAbsolutePath());
         FileUtils.mkdir(tomlDirectory.getAbsolutePath());
         for (TemplateConfig tc : templates) {
-            String tomlBaseName = FileUtils.basename(tc.getSrc().getAbsolutePath()) + "toml";
+            String tomlBaseName = FileUtils.basename(tc.getSrc().getAbsolutePath()) + TOML_FILE_EXT;
             File tomlFile = new File(tomlDirectory, tomlBaseName);
             writeToml(tomlFile, tc, forceDestToLocalFileSystemType);
             FileUtils.copyFileToDirectory(tc.getSrc(), templatesDirectory);
+            warnAboutKeysExcludedByNamespace(tc, context, log);
+        }
+    }
+
+    public static void warnAboutKeysExcludedByNamespace(TemplateConfig tc, PrepareContext context, Log log) {
+        Parser parser = new Parser(tc.getSrc(), context.getEncoding(), Parser.ParserType.GATHER);
+        try {
+            parser.parse(Maps.<String, String>newHashMap());
+            List<String> keys = parser.getGatheredKeys();
+            List<String> offendingKeys = new NamespaceChecker(keys, tc.getKeys()).getUnmatchedKeys();
+            if (!offendingKeys.isEmpty()) {
+                log.error("=========================================================");
+                log.error("Template definition : " + tc.getId());
+                log.error("Template src : " + tc.getSrc());
+                log.error("Something is wrong with the namespace (keys) definition," +
+                    " some of the keys required in the templates are not included by the namespaces");
+                log.error("Namespaces:");
+                for (String ns : tc.getKeys()) {
+                    log.error(ns);
+                }
+                log.error("Keys excluded by the namespaces:");
+                for (String key : offendingKeys) {
+                    log.error(key);
+                }
+                log.error("=========================================================");
+            }
+        } catch (IOException e) {
+            log.error("Something is wrong with the template file <" + tc.getSrc() + ">");
+            log.error(e);
         }
     }
 

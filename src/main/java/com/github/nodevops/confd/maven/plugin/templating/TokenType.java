@@ -1,6 +1,6 @@
 package com.github.nodevops.confd.maven.plugin.templating;
 
-public enum Type {
+public enum TokenType {
     LITERAL,
     IDENTIFIER,
     STRING,
@@ -11,6 +11,6 @@ public enum Type {
     ERROR,
     EOF;
 
-    Type() {
+    TokenType() {
     }
 }
