@@ -51,7 +51,7 @@ public class WorkingDirectoryUtil {
         Parser parser = new Parser(tc.getSrc(), context.getEncoding(), Parser.ParserType.GATHER);
         try {
             parser.parse(Maps.<String, String>newHashMap());
-            List<String> keys = parser.getGatheredKeys();
+            List<String> keys = parser.getTemplateKeys();
             List<String> offendingKeys = new NamespaceChecker(keys, tc.getKeys()).getUnmatchedKeys();
             if (!offendingKeys.isEmpty()) {
                 log.error("=========================================================");
