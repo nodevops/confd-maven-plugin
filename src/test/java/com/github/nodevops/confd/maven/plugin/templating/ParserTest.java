@@ -37,6 +37,11 @@ public class ParserTest extends AbstractTest {
             "  accesslog:\n" +
             "  directory: /var/log/appli\n" +
             "  enabled: true\n");
+        assertThat(parser.getTemplateKeys()).containsOnly(
+            "/your/namespace/myapp/httpport",
+            "/your/namespace/myapp/tomcat/access/log/dir",
+            "/your/namespace/myapp/tomcat/access/log/enabled");
+
     }
 
     @Test
@@ -281,7 +286,7 @@ public class ParserTest extends AbstractTest {
     }
 
     @Test
-    public void shouldGatherKeys() throws IOException {
+    public void shouldGatherKeysInGatherMode() throws IOException {
         String[] templateLines = {
             "server:",
             "  port: {{getv \"/your/namespace/myapp/httpport\"}}",
@@ -294,7 +299,7 @@ public class ParserTest extends AbstractTest {
         File templateFile = createTestFile(templateLines);
         Parser parser = new Parser(templateFile, "UTF-8", Parser.ParserType.GATHER);
         parser.parse(env);
-        assertThat(parser.getGatheredKeys()).containsOnly(
+        assertThat(parser.getTemplateKeys()).containsOnly(
             "/your/namespace/myapp/httpport",
             "/your/namespace/myapp/tomcat/access/log/dir",
             "/your/namespace/myapp/tomcat/access/log/enabled");
