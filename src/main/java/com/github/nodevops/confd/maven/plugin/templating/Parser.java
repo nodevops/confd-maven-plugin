@@ -82,10 +82,11 @@ public class Parser {
             case PARSE:
             default:
                 if (!env.containsKey(keyName)) {
-                        throw new IOException(getErrorMessage("key " + keyName + " does not exist", t));
+                    throw new IOException(getErrorMessage("key " + keyName + " does not exist", t));
                 } else {
-                        sb.append(env.get(keyName));
-                        expectClosingBraces(sc);
+                    keys.add(keyName);
+                    sb.append(env.get(keyName));
+                    expectClosingBraces(sc);
                 }
                 break;
         }
@@ -184,7 +185,7 @@ public class Parser {
 
     }
 
-    public List<String> getGatheredKeys() {
+    public List<String> getTemplateKeys() {
         return keys;
     }
 
