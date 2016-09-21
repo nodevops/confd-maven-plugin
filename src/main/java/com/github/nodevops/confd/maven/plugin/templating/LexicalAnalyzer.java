@@ -13,7 +13,7 @@ public class LexicalAnalyzer {
 
     public Token nextToken() throws IOException {
         if (!buffer.hasRemaining()) {
-            return new Token(Type.EOF, "", buffer.position());
+            return new Token(TokenType.EOF, "", buffer.position());
         }
         if (!isInTemplateExpression) {
             return nextTokenNotInTemplateExpression();
@@ -31,13 +31,13 @@ public class LexicalAnalyzer {
                 char c2 = buffer.get();
                 if (c2 == '{') {
                     isInTemplateExpression = true;
-                    return new Token(Type.ENTERING_TEMPLATE_EXPRESSION, position);
+                    return new Token(TokenType.ENTERING_TEMPLATE_EXPRESSION, position);
                 } else {
                     sb.append(c).append(c2);
                     return nextLiteralToken(sb);
                 }
             } else {
-                return new Token(Type.LITERAL, sb.toString(), position);
+                return new Token(TokenType.LITERAL, sb.toString(), position);
             }
         } else {
             sb.append(c);
@@ -64,23 +64,23 @@ public class LexicalAnalyzer {
                     c = buffer.get();
                     if (c == '}') {
                         isInTemplateExpression = false;
-                        return new Token(Type.LEAVING_TEMPLATE_EXPRESSION, position);
+                        return new Token(TokenType.LEAVING_TEMPLATE_EXPRESSION, position);
                     } else {
                         backup();
-                        return new Token(Type.OPERAND, "}", position);
+                        return new Token(TokenType.OPERAND, "}", position);
                     }
                 } else {
-                    return new Token(Type.OPERAND, "}", position);
+                    return new Token(TokenType.OPERAND, "}", position);
                 }
             } else if (Character.isDigit(c)) {
                 backup();
                 return nextNumberToken();
             } else {
-                return new Token(Type.OPERAND, String.valueOf(c), position);
+                return new Token(TokenType.OPERAND, String.valueOf(c), position);
             }
             position = buffer.position();
         }
-        return new Token(Type.EOF, position);
+        return new Token(TokenType.EOF, position);
     }
 
     private Token nextNumberToken() {
@@ -97,7 +97,7 @@ public class LexicalAnalyzer {
             sb.append(c);
         }
 
-        return new Token(Type.NUMBER, sb.toString(), position);
+        return new Token(TokenType.NUMBER, sb.toString(), position);
     }
 
     private Token nextStringToken() throws IOException {
@@ -107,13 +107,11 @@ public class LexicalAnalyzer {
         while (buffer.hasRemaining()) {
             char c = buffer.get();
             if (c == '"') {
-                return new Token(Type.STRING, sb.toString(), position);
+                return new Token(TokenType.STRING, sb.toString(), position);
             }
-
             sb.append(c);
         }
-
-        throw new IOException("unterminated quoted string");
+        return new Token(TokenType.ERROR, "unterminated quoted string", position);
     }
 
     private Token nextIdentifierToken() {
@@ -130,11 +128,11 @@ public class LexicalAnalyzer {
             sb.append(c);
         }
 
-        return new Token(Type.IDENTIFIER, sb.toString(), position);
+        return new Token(TokenType.IDENTIFIER, sb.toString(), position);
     }
 
     private void skipWhiteSpaces() {
-        int position = buffer.position();
+        buffer.position();
 
         while (buffer.hasRemaining()) {
             char c = buffer.get();
@@ -162,6 +160,6 @@ public class LexicalAnalyzer {
             sb.append(c);
         }
 
-        return new Token(Type.LITERAL, sb.toString(), position);
+        return new Token(TokenType.LITERAL, sb.toString(), position);
     }
 }

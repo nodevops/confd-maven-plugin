@@ -13,6 +13,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import com.github.nodevops.confd.maven.plugin.model.TemplateConfig;
+import com.github.nodevops.confd.maven.plugin.utils.PrepareContext;
 import com.github.nodevops.confd.maven.plugin.utils.WorkingDirectoryUtil;
 
 @Mojo(name = "prepare", defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = false)
@@ -20,6 +21,11 @@ public class PrepareMojo extends AbstractMojo {
 
     public static final String INDEX_AND_ID_SEPARATOR = ":";
     public static final String ELEMENTS_SEPARATOR = ",";
+    /**
+     * The character encoding scheme to be applied when filtering resources.
+     */
+    @Parameter(property = "encoding", defaultValue = "${project.build.sourceEncoding}")
+    protected String encoding;
     /**
      * The output directory into which to copy the resources.
      */
@@ -103,7 +109,12 @@ public class PrepareMojo extends AbstractMojo {
         // This is the real execution block
         try {
             // generate the "confd like" working directory which will contain the toml and template files
-            WorkingDirectoryUtil.generateConfdArtefacts(workingDirectory, templates, forceDestToLocalFileSystemType);
+            PrepareContext context = PrepareContext.builder()
+                .encoding(encoding)
+                .workingDirectory(workingDirectory)
+                .skipPrepare(skipPrepare)
+                .build();
+            WorkingDirectoryUtil.generateConfdArtefacts(context, templates, forceDestToLocalFileSystemType,getLog());
         } catch (IOException e) {
             throw new MojoExecutionException("Caught an IOException while trying to generate confd artefacts in " +
                 workingDirectory + " for templates " + templates, e);

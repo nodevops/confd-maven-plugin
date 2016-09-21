@@ -1,24 +1,24 @@
 package com.github.nodevops.confd.maven.plugin.templating;
 
 public class Token {
-    private Type type;
+    private TokenType tokenType;
     private String value;
     private int position;
 
-    public Token(Type type, int position) {
-        this.type = type;
+    public Token(TokenType tokenType, int position) {
+        this.tokenType = tokenType;
         this.value = "";
         this.position = position;
     }
 
-    public Token(Type type, String value, int position) {
-        this.type = type;
+    public Token(TokenType tokenType, String value, int position) {
+        this.tokenType = tokenType;
         this.value = value;
         this.position = position;
     }
 
-    public Type getType() {
-        return this.type;
+    public TokenType getTokenType() {
+        return this.tokenType;
     }
 
     public String getValue() {
@@ -30,6 +30,6 @@ public class Token {
     }
 
     public String toString() {
-        return "Token{type=" + this.type + ", value=\'" + this.value + '\'' + '}';
+        return "Token{tokenType=" + this.tokenType + ", value=\'" + this.value + '\'' + '}';
     }
 }

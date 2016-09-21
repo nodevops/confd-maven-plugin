@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.plexus.util.FileUtils;
 
@@ -17,6 +18,7 @@ import com.github.nodevops.confd.maven.plugin.processors.ProcessorExecutionExcep
 import com.github.nodevops.confd.maven.plugin.templating.Parser;
 import com.github.nodevops.confd.maven.plugin.utils.DictionaryException;
 import com.github.nodevops.confd.maven.plugin.utils.DictionaryUtil;
+import com.google.common.collect.Sets;
 import com.moandjiezana.toml.Toml;
 
 public class JavaProcessorImpl implements Processor {
@@ -32,14 +34,17 @@ public class JavaProcessorImpl implements Processor {
             Map<String, String> env = DictionaryUtil.readDictionaryAsProperties(context.getDictionaryPath(), context.getEncoding());
             // browse the .toml files
             List<File> tomlFiles = FileUtils.getFiles(tomlDirectory, "*.toml", null);
+            Set<String> allTemplateKeys = Sets.newHashSet();
             for (File tomlFile : tomlFiles) {
                 // process each toml file
                 try {
-                    processToml(tomlFile, templatesDirectory, env, context.getEncoding(), context.isMkdirs());
+                    allTemplateKeys.addAll(
+                        processToml(tomlFile, templatesDirectory, env, context.getEncoding(), context.isMkdirs()));
                 } catch (IOException e) {
                     throw new ProcessorExecutionException("unable to process toml file  " + tomlFile, e);
                 }
             }
+            //TODO: compare used keys with dict keys
         } catch (DictionaryException e) {
             throw new ProcessorExecutionException("unable to load dictionary " + context.getDictionaryPath(), e);
         } catch (IllegalStateException e) {
@@ -49,7 +54,7 @@ public class JavaProcessorImpl implements Processor {
         }
     }
 
-    private void processToml(
+    private List<String> processToml(
         File tomlFile,
         File templatesDirectory,
         Map<String, String> env,
@@ -83,6 +88,7 @@ public class JavaProcessorImpl implements Processor {
         Parser parser = new Parser(templateFile, encoding);
         String parsedTemplate = parser.parse(filteredEnv);
         FileUtils.fileWrite(destFile, encoding, parsedTemplate);
+        return parser.getTemplateKeys();
     }
 }
 

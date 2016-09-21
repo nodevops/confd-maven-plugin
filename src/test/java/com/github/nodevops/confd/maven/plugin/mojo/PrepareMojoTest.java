@@ -35,6 +35,8 @@ public class PrepareMojoTest extends AbstractTest {
 
         PrepareMojo mojo = (PrepareMojo) rule.lookupMojo("prepare", pomFile);
         assertThat(mojo).isNotNull();
+
+        rule.setVariableValueToObject(mojo, "encoding", "UTF-8");
         rule.setVariableValueToObject(mojo, "basedir", basedir);
         rule.setVariableValueToObject(mojo, "workingDirectory", workDirectory);
         mojo.execute();
